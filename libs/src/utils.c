@@ -3,43 +3,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-void *smalloc(size_t size) {
-    void *ptr = malloc(size);
-    if (!ptr) {
-        fprintf(stderr, "nok: 1\n");
-        exit(1);
-    }
-
-    return ptr;
-}
-
-size_t len(char *string) {
-    size_t i = 0;
-
-    while (string[i] != '\0') { i++; }
-
-    return i;
-}
-
-char **split(char *string, char sep) {
-    size_t length = len(string);
-
-    char **res = smalloc(length);
-    char *sub_string = smalloc(length);
-    
-    size_t i = 0;
-    size_t y = 0;
-    
-    while (string[i] != '\0') {
-        if (string[i] == sep) {
-            y = 0;
-        } else {
-            sub_string[y] = string[i];
-        }
-    }
-
-}
-
 void print_error(size_t error_code) {
     const char *errors[] = {
         "",
@@ -58,6 +21,34 @@ void print_error(size_t error_code) {
     } else {
         write(2, "nok: unknow error code\n", 23);
     }
+}
+
+void *smalloc(size_t size) {
+    void *ptr = malloc(size);
+    if (!ptr) {
+        print_error(1);
+        return NULL;
+    }
+
+    return ptr;
+}
+
+size_t len(char *string) {
+    size_t i = 0;
+
+    while (string[i] != '\0') { i++; }
+
+    return i;
+}
+
+size_t array_len(char **array) {
+    size_t i = 0;
+
+    while (array[i]) {
+        i++;
+    }
+
+    return i;
 }
 
 size_t count_words(char *str, char sep) {
@@ -139,4 +130,62 @@ size_t get_file_size(char *filename) {
 
     close(fd);
     return total_size;
+}
+
+char *input(char *printed_text, size_t max_size) {
+    if (max_size == 0) {
+        // Default size
+        max_size = 50;
+    }
+
+    printf("%s", printed_text);
+    char *buff = smalloc(max_size);
+    
+    ssize_t bytes_read = read(0, buff, max_size);
+
+    if (bytes_read == -1) {
+        fprintf(stderr, "nok: 1\n");
+        exit(1);
+    }
+
+    buff[bytes_read] = '\0';
+
+    return buff;
+}
+
+void free_split(char **split_array) {
+    if (split_array == NULL) return;
+
+    size_t i = 0;
+    
+    while (split_array[i] != NULL) {
+        free(split_array[i]);
+        i++;
+    }
+    
+    free(split_array);
+}
+
+ssize_t index(char **array, char *word) {
+    size_t array_length = array_len(array);
+
+    for (size_t i = 0; i < array_len; i++) {
+        if (array[i] == word) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+bool in(char** array, char *word) {
+    size_t array_length = array_len(array);
+
+    for (size_t i = 0; i < array_len; i++) {
+        if (array[i] == word) {
+            return true;
+        }
+    }
+    
+    return false;
 }

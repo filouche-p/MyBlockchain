@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "./libs/headers/utils.h"
 
 
 //malloc, free, printf, write, open, read, close
@@ -20,38 +21,25 @@ bool check_command(char *command) {
     // Vérifie l'existance et la validité d'une commande
     size_t length = len(command);
 
-    if (!length) {
-        fprintf(stderr, "nok: 6\n");
-        exit(1);
+    if (length == 0) {
+        print_error(6);
+        return false;
     }
 
+    // const *first_args[] = {};
+    // const *second_args[] = {};
+
+    char **args = split(command, ' ');
+    size_t args_len = array_len(args);
+
+    for (size_t i = 0; i < args_len; i++) {
+        printf("%s", args[i]);
+    }
+    
     return true;
 }
 
-char *input(char *printed_text, size_t max_size) {
-    if (max_size == 0) {
-        // Default value
-        max_size = 50;
-    }
 
-    printf("%s", printed_text);
-    char *buff = smalloc(max_size);
-    
-    ssize_t bytes_read = read(0, buff, max_size);
-
-    if (bytes_read == -1) {
-        fprintf(stderr, "nok: 1\n");
-        exit(1);
-    } //else if (bytes_read == 0) {
-        //! regarder pour les autres commandes invalide ? faire une fonction et ne pas check ici
-        //fprintf(stderr, "nok: 6\n");
-        //exit(1);
-    //}
-
-    buff[bytes_read] = '\0';
-
-    return buff;
-}
 
 // chemin d'accès dynamique ?
 int save_blockchain() { 
@@ -64,7 +52,6 @@ int save_blockchain() {
         return 0;
     }
 }
-
 
 
 char *read_blockchain() {
