@@ -1,38 +1,52 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <stdbool.h>
+
 
 //malloc, free, printf, write, open, read, close
+typedef struct s_block {
+    char *bid;
+    struct s_block *next;
+} t_block;
 
-void *smalloc(size_t size) {
-    void *ptr = malloc(size);
-    if (ptr == NULL) {
-        // voir coent remonter l'erreur
-        // Crée une fonction throw error
-        return NULL;
+typedef struct s_node {
+    int nid;
+    t_block *first_block;
+    struct s_node *next;
+} t_node;
+
+bool check_command(char *command) {
+    // Vérifie l'existance et la validité d'une commande
+    size_t length = len(command);
+
+    if (!length) {
+        fprintf(stderr, "nok: 6\n");
+        exit(1);
     }
 
-    return ptr;
+    return true;
 }
 
 char *input(char *printed_text, size_t max_size) {
     if (max_size == 0) {
-        max_size = 50; // default value
+        // Default value
+        max_size = 50;
     }
+
     printf("%s", printed_text);
     char *buff = smalloc(max_size);
     
     ssize_t bytes_read = read(0, buff, max_size);
 
     if (bytes_read == -1) {
-        printf("Unable to read system error exit\n");
-        exit(0);
-    } else if (bytes_read == 0) {
-        printf("Invalid input / error\n");
-        exit(0);
-    }
+        fprintf(stderr, "nok: 1\n");
+        exit(1);
+    } //else if (bytes_read == 0) {
+        //! regarder pour les autres commandes invalide ? faire une fonction et ne pas check ici
+        //fprintf(stderr, "nok: 6\n");
+        //exit(1);
+    //}
 
     buff[bytes_read] = '\0';
 
@@ -51,31 +65,7 @@ int save_blockchain() {
     }
 }
 
-size_t get_file_size(char *filename) {
-    int fd = open(filename, O_RDONLY);
-    if (fd == -1) {
-        printf("Error while opening\n");
-        return 0;
-    }
 
-    size_t total_size = 0;
-    ssize_t bytes_read;
-    size_t buffer_size = 4096;
-    char buffer[buffer_size];
-
-    while ((bytes_read = read(fd, buffer, buffer_size)) > 0) {
-        total_size += bytes_read;
-    }
-
-    if (bytes_read == -1) {
-        printf("Error while reading\n");
-        close(fd);
-        return 0;
-    }
-
-    close(fd);
-    return total_size;
-}
 
 char *read_blockchain() {
     char *filename = ".bloackchain.save";
@@ -99,24 +89,7 @@ char *read_blockchain() {
     return data;
 }
 
-char **split(char *string, char sep) {
-    size_t length = strlen(string);
 
-    char **res = smalloc(length);
-    char *sub_string = smalloc(length);
-    
-    size_t i = 0;
-    size_t y = 0;
-    
-    while (string[i] != '\0') {
-        if (string[i] == sep) {
-            y = 0;
-        } else {
-            sub_string[y] = string[i];
-        }
-    }
-
-}
 
 int rtos(char *raw_data) {
     // raw to struct
