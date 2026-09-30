@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <stdbool.h>
 
 void print_error(size_t error_code) {
     const char *errors[] = {
@@ -176,16 +177,4 @@ ssize_t index(char **array, char *word) {
     }
     
     return -1;
-}
-
-bool in(char** array, char *word) {
-    size_t array_length = array_len(array);
-
-    for (size_t i = 0; i < array_len; i++) {
-        if (array[i] == word) {
-            return true;
-        }
-    }
-    
-    return false;
 }
