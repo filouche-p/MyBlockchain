@@ -1,5 +1,5 @@
-#ifndef APPEND_H
-#define APPEND_H
+#ifndef UTILS_H
+#define UTILS_H
 
 
 void print_error(size_t error_code);
@@ -11,8 +11,10 @@ char **split(char *string, char sep);
 size_t get_file_size(char *filename);
 char *input(char *printed_text, size_t max_size);
 void free_split(char **split_array);
-ssize_t index(char **array, char *word);
+ssize_t _index(char **array, char *word);
 bool in(char** array, char *word);
-
+bool check_nid(const char *string);
+bool check_bid(const char *_);
+size_t array_len(char **array);
 
 #endif

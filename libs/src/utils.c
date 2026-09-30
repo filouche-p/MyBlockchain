@@ -1,8 +1,13 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 void print_error(size_t error_code) {
     const char *errors[] = {
@@ -167,7 +172,7 @@ void free_split(char **split_array) {
     free(split_array);
 }
 
-ssize_t index(char **array, char *word) {
+ssize_t _index(char **array, char *word) {
     size_t array_length = array_len(array);
 
     for (size_t i = 0; i < array_len; i++) {
@@ -177,4 +182,28 @@ ssize_t index(char **array, char *word) {
     }
     
     return -1;
+} 
+
+int _strcmp(const char *s1, const char *s2) {
+    while (*s1 && *s1 == *s2) {
+        s1++;
+        s2++;
+    }
+    
+    return (unsigned char)*s1 - (unsigned char)*s2;
+}
+
+bool check_nid(const char *string) {
+    size_t i = 0;
+
+    while('0' < *string && *string < '9') {
+        i++;
+    }
+
+    return len(string) == i;
+}
+
+bool check_bid(const char *_) {
+    // any string can bu used as string
+    return true;
 }

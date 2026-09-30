@@ -2,7 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
 #include "./libs/headers/utils.h"
+#include "./libs/headers/handler.h"
 
 
 //malloc, free, printf, write, open, read, close
@@ -18,7 +25,7 @@ typedef struct s_node {
 } t_node;
 
 bool check_command(char *command) {
-    // Vérifie l'existance et la validité d'une commande
+    // Vérifie l'existance et la execute une commande
     size_t length = len(command);
 
     if (length == 0) {
@@ -26,15 +33,14 @@ bool check_command(char *command) {
         return false;
     }
 
-    // const *first_args[] = {};
-    // const *second_args[] = {};
-
     char **args = split(command, ' ');
     size_t args_len = array_len(args);
 
     for (size_t i = 0; i < args_len; i++) {
         printf("%s", args[i]);
     }
+
+    handle_main(args);
     
     return true;
 }
@@ -51,6 +57,8 @@ int save_blockchain() {
         printf("Error while reading\n");
         return 0;
     }
+
+    return 1;
 }
 
 
@@ -65,7 +73,7 @@ char *read_blockchain() {
 
     size_t size = get_file_size(filename);
     if (size == 0) {
-        return -1;
+        return "\0";
     }
 
     char *data = smalloc(size);
@@ -95,6 +103,8 @@ int main(void) {
     char *res = input("Entrez du texte >\n", 100);
 
     printf("%s", res);
+    
+    check_command(res);
 
     free(res);
     return 0;
