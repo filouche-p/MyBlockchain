@@ -29,6 +29,16 @@ void print_error(size_t error_code) {
     }
 }
 
+void *my_memset(void *ptr, int value, size_t size) {
+    unsigned char *p = (unsigned char *)ptr;
+
+    for (size_t i = 0; i < size; i++) {
+        *(p + i) = (unsigned char)value;
+    }
+
+    return ptr;
+}
+
 void *smalloc(size_t size) {
     void *ptr = malloc(size);
     if (!ptr) {
@@ -36,10 +46,12 @@ void *smalloc(size_t size) {
         return NULL;
     }
 
+    my_memset(ptr, 0, size);
+
     return ptr;
 }
 
-size_t len(char *string) {
+size_t my_strlen(const char *string) {
     size_t i = 0;
 
     while (string[i] != '\0') { i++; }
@@ -65,6 +77,7 @@ size_t count_words(char *str, char sep) {
         while (str[i] == sep) {
             i++;
         }
+
         if (str[i] != '\0' && str[i] != sep) {
             count++;
             while (str[i] != '\0' && str[i] != sep) {
@@ -72,17 +85,23 @@ size_t count_words(char *str, char sep) {
             }
         }
     }
+
     return count;
 }
 
 char *extract_word(char *str, size_t start, size_t length) {
     char *word = smalloc(length + 1);
+    if(!word) {
+        return NULL;
+    }
+
     size_t j = 0;
     
     while (j < length) {
         word[j] = str[start + j];
         j++;
     }
+
     word[j] = '\0';
     
     return word;
@@ -93,6 +112,9 @@ char **split(char *string, char sep) {
 
     size_t words = count_words(string, sep);
     char **res = smalloc((words + 1) * sizeof(char *));
+    if (!res) {
+        return NULL;
+    }
     
     size_t i = 0;
     size_t word_idx = 0;
@@ -129,7 +151,7 @@ size_t get_file_size(char *filename) {
     }
 
     if (bytes_read == -1) {
-        printf("Error while reading\n");
+        fprintf(stderr, "nok: no more resources available on the computer\n");
         close(fd);
         return 0;
     }
@@ -145,16 +167,22 @@ char *input(char *printed_text, size_t max_size) {
     }
 
     printf("%s", printed_text);
-    char *buff = smalloc(max_size);
+
+    fflush(stdout);
+
+    char *buff = smalloc(max_size + 1);
+    if (!buff) {
+        return NULL;
+    }
     
     ssize_t bytes_read = read(0, buff, max_size);
 
     if (bytes_read == -1) {
-        fprintf(stderr, "nok: 1\n");
-        exit(1);
+        print_error(1);
+        return NULL;
     }
 
-    buff[bytes_read] = '\0';
+    buff[bytes_read - 1] = '\0';
 
     return buff;
 }
@@ -172,19 +200,7 @@ void free_split(char **split_array) {
     free(split_array);
 }
 
-ssize_t _index(char **array, char *word) {
-    size_t array_length = array_len(array);
-
-    for (size_t i = 0; i < array_len; i++) {
-        if (array[i] == word) {
-            return i;
-        }
-    }
-    
-    return -1;
-} 
-
-int _strcmp(const char *s1, const char *s2) {
+int my_strcmp(const char *s1, const char *s2) {
     while (*s1 && *s1 == *s2) {
         s1++;
         s2++;
@@ -193,14 +209,30 @@ int _strcmp(const char *s1, const char *s2) {
     return (unsigned char)*s1 - (unsigned char)*s2;
 }
 
+// ssize_t my_index(char **array, char *word) {
+//     size_t array_length = array_len(array);
+
+//     for (size_t i = 0; i < array_len; i++) {
+//         if (array[i] == word) {
+//             return i;
+//         }
+//     }
+    
+//     return -1;
+// } 
+
 bool check_nid(const char *string) {
+    if (string[0] == '\0') {
+        return false;
+    }
+    
     size_t i = 0;
 
-    while('0' < *string && *string < '9') {
+    while('0' < *(string + i) && *(string + i) < '9') {
         i++;
     }
 
-    return len(string) == i;
+    return my_strlen(string) == i;
 }
 
 bool check_bid(const char *_) {

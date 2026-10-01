@@ -25,8 +25,7 @@ typedef struct s_node {
 } t_node;
 
 bool check_command(char *command) {
-    // Vérifie l'existance et la execute une commande
-    size_t length = len(command);
+    size_t length = my_strlen(command);
 
     if (length == 0) {
         print_error(6);
@@ -37,8 +36,10 @@ bool check_command(char *command) {
     size_t args_len = array_len(args);
 
     for (size_t i = 0; i < args_len; i++) {
-        printf("%s", args[i]);
+        printf("'%s' ", args[i]);
     }
+    
+    printf("\n");
 
     handle_main(args);
     
@@ -86,26 +87,49 @@ char *read_blockchain() {
 
 
 
-int rtos(char *raw_data) {
+// int rtos(char *raw_data) {
     // raw to struct
     // chaque ligne est un node
     // le nid est les premiers caractères de chaque ligne jusqu'au :
     // les : peuvent être ignorer
     // chaque blockid sont séparer par des , (potentiellement des espaces)
 
-    char **rows = split(raw_data, '\n');
+    // char **rows = split(raw_data, '\n');
 
-    return 0;
-}
+    // return 0;
+// }
 
 int main(void) {
-    // Garbage collector ?????
-    char *res = input("Entrez du texte >\n", 100);
 
-    printf("%s", res);
+
+    // printf("[%c%d", sync_state, n_node);
+
+    // char *res = input("]> ", 100);
+    // // free en cas de commande incorecte
     
-    check_command(res);
 
-    free(res);
+    // printf("echo : '%s'\n", res);
+    
+    // check_command(res);
+
+    // free(res);
+
+
+    while(1) {
+        char sync_state = 's';
+        int n_node = 0;
+
+        printf("[%c%d", sync_state, n_node);
+
+        char *res = input("]> ", 100);
+        // free en cas de commande incorecte
+        
+
+        printf("echo : '%s'\n", res);
+        
+        check_command(res);
+
+        free(res);
+    }
     return 0;
 }
