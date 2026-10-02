@@ -11,15 +11,7 @@ size_t ARGS_STEP = 0;
 
 // Handler Add
 void handle_add_node(char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
-        print_error(6);
-        return;
-    }
-
-    // execute add node args[ARG_STEP] = nid ?
-    if(!check_nid(args[ARGS_STEP])) {
-        ARGS_STEP = 0;
+    if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
@@ -28,15 +20,7 @@ void handle_add_node(char **args) {
 }
 
 void handle_add_block(char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
-        print_error(6);
-        return;
-    }
-
-    // execute add block args[ARG_STEP] = bid ?
-    if(!check_bid(args[ARGS_STEP])) {
-        ARGS_STEP = 0;
+    if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
@@ -44,30 +28,14 @@ void handle_add_block(char **args) {
 
 // Handler Rm
 void handle_rm_node(char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
-        print_error(6);
-        return;
-    }
-
-    // execute rm node args[ARG_STEP] = nid ?
-    if(!check_nid(args[ARGS_STEP])) {
-        ARGS_STEP = 0;
+    if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
 }
 
 void handle_rm_block(char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
-        print_error(6);
-        return;
-    }
-
-    // execute rm node args[ARG_STEP] = bid ?
-    if(!check_bid(args[ARGS_STEP])) {
-        ARGS_STEP = 0;
+    if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
@@ -76,7 +44,6 @@ void handle_rm_block(char **args) {
 
 void handle_add(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -100,7 +67,6 @@ void handle_add(char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -108,7 +74,6 @@ void handle_add(char **args) {
 
 void handle_rm(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -132,7 +97,6 @@ void handle_rm(char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -140,7 +104,6 @@ void handle_rm(char **args) {
 
 void handle_ls(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -153,7 +116,6 @@ void handle_ls(char **args) {
 
 void handle_sync(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -166,7 +128,6 @@ void handle_sync(char **args) {
 
 void handle_quit(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -181,7 +142,6 @@ void handle_quit(char **args) {
 
 void handle_main(char **args) {
     if(!args || !args[ARGS_STEP]) {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
@@ -208,8 +168,29 @@ void handle_main(char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        ARGS_STEP = 0;
         print_error(6);
         return;
     }
+}
+
+void check_command(char *command) {
+    size_t length = my_strlen(command);
+
+    if (length == 0) {
+        print_error(6);
+        return;
+    }
+
+    char **args = split(command, ' ');
+    if(!args) {
+        print_error(6);
+        free_split(args);
+        return;
+    }
+
+    ARGS_STEP = 0;
+
+    handle_main(args);
+
+    free_split(args);
 }

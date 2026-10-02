@@ -1,5 +1,5 @@
-#ifndef HANDLER_H
-#define HANDLER_H
+#ifndef COMMAND_HANDLER_H
+#define COMMAND_HANDLER_H
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -25,5 +25,6 @@ void handle_ls(char **args);
 void handle_sync(char **args);
 void handle_quit(char **args);
 void handle_main(char **args);
+void check_command(char *command);
 
 #endif

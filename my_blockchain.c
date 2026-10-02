@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include "./libs/headers/utils.h"
-#include "./libs/headers/handler.h"
+#include "./libs/headers/command_handler.h"
 
 
 //malloc, free, printf, write, open, read, close
@@ -59,32 +59,7 @@ char *read_blockchain() {
     return data;
 }
 
-bool check_command(char *command) {
-    size_t length = my_strlen(command);
 
-    if (length == 0) {
-        print_error(6);
-        return false;
-    }
-
-    char **args = split(command, ' ');
-    if(!args) {
-        print_error(6);
-        return false;
-    }
-
-    // size_t args_len = array_len(args);
-
-    // for (size_t i = 0; i < args_len; i++) {
-    //     printf("'%s' ", args[i]);
-    // }
-    
-    printf("\n");
-
-    handle_main(args);
-    
-    return true;
-}
 
 
 
@@ -101,7 +76,8 @@ bool check_command(char *command) {
 // }
 
 int main(void) {
-    while(1) {
+    size_t i = 0;
+    while(i < 50) {
         char sync_state = 's';
         int n_node = 0;
 
@@ -113,10 +89,16 @@ int main(void) {
             free(res);
             break;
         }
+
+        if(!res) {
+            printf("\n");
+        }
         
         check_command(res);
-        
+
         free(res);
+
+        i++;
     }
 
     return 0;

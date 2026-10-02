@@ -109,10 +109,12 @@ char *extract_word(char *str, size_t start, size_t length) {
 
 char **split(char *string, char sep) {
     if (string == NULL) return NULL;
+    // sep = (unsigned char)sep;
 
     size_t words = count_words(string, sep);
     char **res = smalloc((words + 1) * sizeof(char *));
     if (!res) {
+        print_error(1);
         return NULL;
     }
     
