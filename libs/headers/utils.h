@@ -8,6 +8,17 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+typedef struct s_block {
+    char *bid;
+    struct s_block *next;
+} t_block;
+
+typedef struct s_node {
+    int nid;
+    t_block *first_block;
+    struct s_node *next;
+} t_node;
+
 void print_error(size_t error_code);
 void *smalloc(size_t size);
 size_t my_strlen(char *string);
@@ -23,5 +34,6 @@ bool check_nid(const char *string);
 bool check_bid(const char *_);
 size_t array_len(char **array);
 int my_strcmp(const char *s1, const char *s2);
+int str_to_int(const char *string);
 
 #endif

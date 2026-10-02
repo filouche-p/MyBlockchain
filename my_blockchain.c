@@ -13,16 +13,7 @@
 
 
 //malloc, free, printf, write, open, read, close
-typedef struct s_block {
-    char *bid;
-    struct s_block *next;
-} t_block;
 
-typedef struct s_node {
-    int nid;
-    t_block *first_block;
-    struct s_node *next;
-} t_node;
 
 // chemin d'accès dynamique ?
 int save_blockchain() { 
@@ -58,9 +49,6 @@ char *read_blockchain() {
 
     return data;
 }
-
-
-
 
 
 // int rtos(char *raw_data) {

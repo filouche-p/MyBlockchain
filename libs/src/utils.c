@@ -103,7 +103,7 @@ char *extract_word(char *str, size_t start, size_t length) {
     }
 
     word[j] = '\0';
-    
+
     return word;
 }
 
@@ -239,6 +239,7 @@ bool check_nid(const char *string) {
     
     size_t i = 0;
 
+    if (*(string + i))
     while('0' <= *(string + i) && *(string + i) <= '9') {
         i++;
     }
@@ -252,4 +253,26 @@ bool check_bid(const char *bid_str) {
     }
     // any non-null string can be used as string
     return true;
+}
+
+int str_to_int(const char *string) {
+    int res = 0;
+    int sign = 1;
+
+    if (!string) {
+        print_error(1);
+        return 0;
+    }
+
+    if (*string == '-') {
+        sign = -1;
+        string++;
+    }
+
+    while (*string != '\0') {
+        res = res * 10 + (*string - '0');
+        string++;
+    }
+
+    return res * sign;
 }

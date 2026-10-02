@@ -4,8 +4,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "../headers/handler.h"
 #include "../headers/utils.h"
+#include "../headers/command_handler.h"
+#include "../headers/node_manager.h"
 
 size_t ARGS_STEP = 0;
 
@@ -16,7 +17,12 @@ void handle_add_node(char **args) {
         return;
     }
 
-    printf("valid nid : %s\n", args[ARGS_STEP]);
+    int nid = str_to_int(args[ARGS_STEP]);
+    // where we get the node ?
+    t_block *node = smalloc(sizeof(struct s_node));
+    printf("valid nid : %d\n", nid);
+    
+    add_node(node, nid);
 }
 
 void handle_add_block(char **args) {
