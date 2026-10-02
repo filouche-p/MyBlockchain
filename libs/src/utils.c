@@ -1,13 +1,9 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
 
 void print_error(size_t error_code) {
     const char *errors[] = {
@@ -52,6 +48,10 @@ void *smalloc(size_t size) {
 }
 
 size_t my_strlen(const char *string) {
+    if (string == NULL) {
+        return 0;
+    }
+
     size_t i = 0;
 
     while (string[i] != '\0') { i++; }
@@ -177,12 +177,17 @@ char *input(char *printed_text, size_t max_size) {
     
     ssize_t bytes_read = read(0, buff, max_size);
 
-    if (bytes_read == -1) {
-        print_error(1);
+    if (bytes_read <= 0) {
+        if (bytes_read == -1) print_error(1);
+        free(buff);
         return NULL;
     }
 
-    buff[bytes_read - 1] = '\0';
+    if (buff[bytes_read - 1] == '\n') {
+        buff[bytes_read - 1] = '\0';
+    } else {
+        buff[bytes_read] = '\0';
+    }
 
     return buff;
 }
@@ -201,6 +206,10 @@ void free_split(char **split_array) {
 }
 
 int my_strcmp(const char *s1, const char *s2) {
+    if (!s1 && !s2) return 0;
+    if (!s1) return -1;
+    if (!s2) return 1;
+
     while (*s1 && *s1 == *s2) {
         s1++;
         s2++;
@@ -222,20 +231,23 @@ int my_strcmp(const char *s1, const char *s2) {
 // } 
 
 bool check_nid(const char *string) {
-    if (string[0] == '\0') {
+    if (!string || string[0] == '\0') {
         return false;
     }
     
     size_t i = 0;
 
-    while('0' < *(string + i) && *(string + i) < '9') {
+    while('0' <= *(string + i) && *(string + i) <= '9') {
         i++;
     }
 
     return my_strlen(string) == i;
 }
 
-bool check_bid(const char *_) {
-    // any string can bu used as string
+bool check_bid(const char *bid_str) {
+    if (!bid_str) {
+        return false;
+    }
+    // any non-null string can be used as string
     return true;
 }

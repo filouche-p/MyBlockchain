@@ -24,44 +24,18 @@ typedef struct s_node {
     struct s_node *next;
 } t_node;
 
-bool check_command(char *command) {
-    size_t length = my_strlen(command);
-
-    if (length == 0) {
-        print_error(6);
-        return false;
-    }
-
-    char **args = split(command, ' ');
-    size_t args_len = array_len(args);
-
-    for (size_t i = 0; i < args_len; i++) {
-        printf("'%s' ", args[i]);
-    }
-    
-    printf("\n");
-
-    handle_main(args);
-    
-    return true;
-}
-
-
-
 // chemin d'accès dynamique ?
 int save_blockchain() { 
-    char *filename = ".bloackchain.save";
+    char *filename = ".blockchain.save";
     int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 644);
 
     if(fd == -1) {
-        // throw error
-        printf("Error while reading\n");
+        print_error(1);
         return 0;
     }
 
     return 1;
 }
-
 
 char *read_blockchain() {
     char *filename = ".bloackchain.save";
@@ -85,6 +59,33 @@ char *read_blockchain() {
     return data;
 }
 
+bool check_command(char *command) {
+    size_t length = my_strlen(command);
+
+    if (length == 0) {
+        print_error(6);
+        return false;
+    }
+
+    char **args = split(command, ' ');
+    if(!args) {
+        print_error(6);
+        return false;
+    }
+
+    // size_t args_len = array_len(args);
+
+    // for (size_t i = 0; i < args_len; i++) {
+    //     printf("'%s' ", args[i]);
+    // }
+    
+    printf("\n");
+
+    handle_main(args);
+    
+    return true;
+}
+
 
 
 // int rtos(char *raw_data) {
@@ -100,21 +101,6 @@ char *read_blockchain() {
 // }
 
 int main(void) {
-
-
-    // printf("[%c%d", sync_state, n_node);
-
-    // char *res = input("]> ", 100);
-    // // free en cas de commande incorecte
-    
-
-    // printf("echo : '%s'\n", res);
-    
-    // check_command(res);
-
-    // free(res);
-
-
     while(1) {
         char sync_state = 's';
         int n_node = 0;
@@ -122,14 +108,16 @@ int main(void) {
         printf("[%c%d", sync_state, n_node);
 
         char *res = input("]> ", 100);
-        // free en cas de commande incorecte
-        
 
-        printf("echo : '%s'\n", res);
+        if(my_strcmp(res, "quit") == 0) {
+            free(res);
+            break;
+        }
         
         check_command(res);
-
+        
         free(res);
     }
+
     return 0;
 }

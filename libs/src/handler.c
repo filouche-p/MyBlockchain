@@ -1,28 +1,24 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
+#include "../headers/handler.h"
 #include "../headers/utils.h"
 
 size_t ARGS_STEP = 0;
 
-typedef struct s_handler {
-    const char *command;
-    void (*function_handler)(char **args);
-} t_handler;
-
 // Handler Add
 void handle_add_node(char **args) {
-    printf("add_node : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // execute add node args[ARG_STEP] = nid ?
-    if(!args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
+    if(!check_nid(args[ARGS_STEP])) {
         ARGS_STEP = 0;
         print_error(6);
         return;
@@ -32,7 +28,11 @@ void handle_add_node(char **args) {
 }
 
 void handle_add_block(char **args) {
-    printf("add_block : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // execute add block args[ARG_STEP] = bid ?
     if(!check_bid(args[ARGS_STEP])) {
@@ -44,7 +44,11 @@ void handle_add_block(char **args) {
 
 // Handler Rm
 void handle_rm_node(char **args) {
-    printf("rm_node : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // execute rm node args[ARG_STEP] = nid ?
     if(!check_nid(args[ARGS_STEP])) {
@@ -55,7 +59,11 @@ void handle_rm_node(char **args) {
 }
 
 void handle_rm_block(char **args) {
-    printf("rm_block : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // execute rm node args[ARG_STEP] = bid ?
     if(!check_bid(args[ARGS_STEP])) {
@@ -67,7 +75,11 @@ void handle_rm_block(char **args) {
 
 
 void handle_add(char **args) {
-    printf("add : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     t_handler tabs[] = {
         {"node", handle_add_node},
@@ -87,7 +99,7 @@ void handle_add(char **args) {
         i++;
     }
 
-    if(!tabs[i].command) {
+    if(tabs[i].command[0] == '\0') {
         ARGS_STEP = 0;
         print_error(6);
         return;
@@ -95,7 +107,11 @@ void handle_add(char **args) {
 }
 
 void handle_rm(char **args) {
-    printf("rm : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     t_handler tabs[] = {
         {"node", handle_rm_node},
@@ -115,7 +131,7 @@ void handle_rm(char **args) {
         i++;
     }
 
-    if(!tabs[i].command) {
+    if(tabs[i].command[0] == '\0') {
         ARGS_STEP = 0;
         print_error(6);
         return;
@@ -123,7 +139,11 @@ void handle_rm(char **args) {
 }
 
 void handle_ls(char **args) {
-    printf("ls : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // flags -l ?
     if(args) {
@@ -132,7 +152,11 @@ void handle_ls(char **args) {
 }
 
 void handle_sync(char **args) {
-    printf("sync : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
 
     // execute sync
     if(args) {
@@ -141,7 +165,12 @@ void handle_sync(char **args) {
 }
 
 void handle_quit(char **args) {
-    printf("quit : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
+
 
     // execute quit ?
     // à faire à part (while(strcmp(args[0], "quit"))) ou renvoyer une valeur différente de toutes les autres fonction
@@ -151,7 +180,12 @@ void handle_quit(char **args) {
 }
 
 void handle_main(char **args) {
-    printf("main : checking for : '%s'\n", args[ARGS_STEP]);
+    if(!args || !args[ARGS_STEP]) {
+        ARGS_STEP = 0;
+        print_error(6);
+        return;
+    }
+
     t_handler tabs[] = {
         {"add", handle_add},
         {"rm", handle_rm},
@@ -173,7 +207,7 @@ void handle_main(char **args) {
         i++;
     }
 
-    if(!tabs[i].command) {
+    if(tabs[i].command[0] == '\0') {
         ARGS_STEP = 0;
         print_error(6);
         return;
