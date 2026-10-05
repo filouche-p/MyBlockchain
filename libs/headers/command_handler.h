@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "../headers/utils.h"
+#include "./utils.h"
 
 
 typedef struct s_handler {

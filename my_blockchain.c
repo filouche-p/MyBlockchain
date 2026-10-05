@@ -69,13 +69,13 @@ int main(void) {
     t_node *blockchain = NULL;
 
     size_t i = 0;
-    while(i < 50) {
+    while(i < 10) {
         char sync_state = 's';
         int n_node = 0;
 
         printf("[%c%d", sync_state, n_node);
 
-        char *res = input("]> ", 3);
+        char *res = input("]> ", 50);
 
         if(my_strcmp(res, "quit") == 0) {
             free(res);
@@ -85,7 +85,7 @@ int main(void) {
         if(!res) {
             printf("\n");
         }
-        
+        // separate check commande and handle main call
         check_command(&blockchain, res);
 
         free(res);

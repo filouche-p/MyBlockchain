@@ -1,8 +1,10 @@
-#ifndef COMMAND_HANDLER_H
-#define COMMAND_HANDLER_H
+#ifndef NODE_MANAGER_H
+#define NODE_MANAGER_H
 
 #include "./utils.h"
 
-t_node *add_node(t_node **blockchain_address, int nid);
+void add_node(t_node **blockchain_address, int nid);
+bool rm_node(t_node **blockchain_address, int nid);
+void ls_node(t_node **blockchain_address);
 
 #endif

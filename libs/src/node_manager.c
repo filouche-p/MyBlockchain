@@ -1,58 +1,73 @@
 #include "../headers/utils.h"
 #include "../headers/node_manager.h"
 
-
 /*
     NID is ALWAYS supposed to be a correct value (int)
 */
 
-t_node *add_node(t_node **blockchain_address, int nid) {
+void add_node(t_node **blockchain_address, int nid) {
     t_node *new_node = malloc(sizeof(t_node));
+    t_node *node = *blockchain_address; // *blockchain_address is the head
+
     if (!new_node) {
-        printf("error : 1\n"); // free ?
-        return NULL;
+        print_error(1); //! free ?
+        return;
     }
 
     new_node->nid = nid;
     new_node->next = NULL;
     
     // empty list
-    if (*blockchain_address == NULL) { 
+    if (!(*blockchain_address)) {
         *blockchain_address = new_node;
+        return;
     }
-
-    t_node *node = *blockchain_address;
     
     while (node->next != NULL) {
         node = node->next;
     }
     
     node->next = new_node;
-
-    return new_node;
 }
 
-// bool add_node(t_node *node, int nid) {
-//     if (!node) {
-//         print_error(4);
-//         return false;
-//     }
-//     //assert we are at the last node
-//     while (node->next) {
-//         node = node->next;
-//     }
+void ls_node(t_node **blockchain_address) {
+    print();
+    t_node *node = *blockchain_address;
 
-//     // malloc
-//     node->next = smalloc(sizeof(t_node));
-//     if(!node->next) {
-//         print_error(1);
-//         return false;
-//     }
+    while (node) {
+        printf("%d->", node->nid);
+        node = node->next;
+    }
 
-//     node->next->nid = nid;
-//     return true;
-// }
+    printf("(null)\n");
+}
 
-bool rm_node(t_node *node, int nid) {
+bool rm_node(t_node **blockchain_address, int nid) {
+    if (!blockchain_address || !(*blockchain_address)) {
+        return false;
+    }
 
+    t_node *head = *blockchain_address;
+    t_node *temp_to_free = NULL;
+
+    if (head->nid == nid) {
+        *blockchain_address = head->next;
+        free(head);
+        return true;
+    }
+
+    t_node *node = head;
+
+    while (node->next != NULL) {
+        if (node->next->nid == nid) {
+            temp_to_free = node->next;
+            node->next = node->next->next;
+            free(temp_to_free);
+            return true; // We can exit the function cause nid is unique to every node
+        } else {
+            node = node->next;
+        }
+    }
+
+    return false;
 }

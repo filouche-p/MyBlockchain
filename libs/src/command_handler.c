@@ -18,7 +18,6 @@ void handle_add_node(t_node **blockchain, char **args) {
     }
 
     int nid = str_to_int(args[ARGS_STEP]);
-    printf("valid nid : %d\n", nid);
     
     add_node(blockchain, nid);
 }
@@ -39,7 +38,10 @@ void handle_rm_node(t_node **blockchain, char **args) {
         return;
     }
 
-    printf("%p\n", blockchain);
+    bool success = rm_node(blockchain, str_to_int(args[ARGS_STEP]));
+    if(!success) {
+        print_error(4);
+    }
 }
 
 void handle_rm_block(t_node **blockchain, char **args) {
@@ -113,17 +115,18 @@ void handle_rm(t_node **blockchain, char **args) {
 }
 
 void handle_ls(t_node **blockchain, char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        print_error(6);
-        return;
-    }
-
+    // if(!args || !args[ARGS_STEP]) {
+    //     printf("no args ls detect\n");
+    //     print_error(6);
+    //     return;
+    // }
+    // printf("%s\n", args[0]);
     // flags -l ?
-    if(args) {
-        printf("here");
-    }
 
-    printf("%p\n", blockchain);
+    // printf("%p\n", blockchain);
+
+    (void)args;
+    ls_node(blockchain);
 }
 
 void handle_sync(t_node **blockchain, char **args) {
@@ -139,22 +142,6 @@ void handle_sync(t_node **blockchain, char **args) {
 
     printf("%p\n", blockchain);
 }
-
-// void handle_quit(t_node **blockchain, char **args) {
-//     if(!args || !args[ARGS_STEP]) {
-//         print_error(6);
-//         return;
-//     }
-
-
-//     // execute quit ?
-//     // à faire à part (while(strcmp(args[0], "quit"))) ou renvoyer une valeur différente de toutes les autres fonction
-//     if(args) {
-//         printf("here");
-//     }
-
-//     printf("%p\n", blockchain);
-// }
 
 void handle_main(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
@@ -183,6 +170,7 @@ void handle_main(t_node **blockchain, char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
+        printf("not found brother\n");
         print_error(6);
         return;
     }
@@ -202,6 +190,12 @@ void check_command(t_node **blockchain, char *command) {
         free_split(args);
         return;
     }
+
+    // size_t args_len = array_len(args);
+
+    // for(size_t i = 0; i < args_len; i++) {
+    //     printf("%s\n", args[i]);
+    // }
 
     ARGS_STEP = 0;
 

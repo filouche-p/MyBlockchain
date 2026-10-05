@@ -220,22 +220,13 @@ int my_strcmp(const char *s1, const char *s2) {
     return (unsigned char)*s1 - (unsigned char)*s2;
 }
 
-// ssize_t my_index(char **array, char *word) {
-//     size_t array_length = array_len(array);
-
-//     for (size_t i = 0; i < array_len; i++) {
-//         if (array[i] == word) {
-//             return i;
-//         }
-//     }
-    
-//     return -1;
-// } 
-
 bool check_nid(const char *string) {
+    //! every nid need to be unique
     if (!string || string[0] == '\0') {
         return false;
     }
+
+    print();
     
     size_t i = 0;
 
@@ -248,9 +239,10 @@ bool check_nid(const char *string) {
 }
 
 bool check_bid(const char *bid_str) {
-    if (!bid_str) {
+    if (!bid_str && bid_str[0] != '\0') {
         return false;
     }
+
     // any non-null string can be used as string
     return true;
 }
