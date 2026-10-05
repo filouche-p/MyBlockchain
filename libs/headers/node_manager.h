@@ -3,6 +3,6 @@
 
 #include "./utils.h"
 
-bool add_node(t_node *node, int nid);
+t_node *add_node(t_node **blockchain_address, int nid);
 
 #endif

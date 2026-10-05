@@ -11,44 +11,48 @@
 size_t ARGS_STEP = 0;
 
 // Handler Add
-void handle_add_node(char **args) {
+void handle_add_node(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
 
     int nid = str_to_int(args[ARGS_STEP]);
-    // where we get the node ?
-    t_block *node = smalloc(sizeof(struct s_node));
     printf("valid nid : %d\n", nid);
     
-    add_node(node, nid);
+    add_node(blockchain, nid);
 }
 
-void handle_add_block(char **args) {
+void handle_add_block(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
+
+    printf("%p\n", blockchain);
 }
 
 // Handler Rm
-void handle_rm_node(char **args) {
+void handle_rm_node(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
+
+    printf("%p\n", blockchain);
 }
 
-void handle_rm_block(char **args) {
+void handle_rm_block(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
         print_error(6);
         return;
     }
+
+    printf("%p\n", blockchain);
 }
 
 
-void handle_add(char **args) {
+void handle_add(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
@@ -65,7 +69,7 @@ void handle_add(char **args) {
     while(tabs[i].command[0]) {
         if(my_strcmp(tabs[i].command, args[ARGS_STEP]) == 0) {
             ARGS_STEP++;
-            tabs[i].function_handler(args);
+            tabs[i].function_handler(blockchain, args);
             break;
         }
 
@@ -78,7 +82,7 @@ void handle_add(char **args) {
     }
 }
 
-void handle_rm(char **args) {
+void handle_rm(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
@@ -95,7 +99,7 @@ void handle_rm(char **args) {
     while(tabs[i].command[0]) {
         if(my_strcmp(tabs[i].command, args[ARGS_STEP]) == 0) {
             ARGS_STEP++;
-            tabs[i].function_handler(args);
+            tabs[i].function_handler(blockchain, args);
             break;
         }
 
@@ -108,7 +112,7 @@ void handle_rm(char **args) {
     }
 }
 
-void handle_ls(char **args) {
+void handle_ls(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
@@ -118,9 +122,11 @@ void handle_ls(char **args) {
     if(args) {
         printf("here");
     }
+
+    printf("%p\n", blockchain);
 }
 
-void handle_sync(char **args) {
+void handle_sync(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
@@ -130,23 +136,27 @@ void handle_sync(char **args) {
     if(args) {
         printf("here");
     }
+
+    printf("%p\n", blockchain);
 }
 
-void handle_quit(char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        print_error(6);
-        return;
-    }
+// void handle_quit(t_node **blockchain, char **args) {
+//     if(!args || !args[ARGS_STEP]) {
+//         print_error(6);
+//         return;
+//     }
 
 
-    // execute quit ?
-    // à faire à part (while(strcmp(args[0], "quit"))) ou renvoyer une valeur différente de toutes les autres fonction
-    if(args) {
-        printf("here");
-    }
-}
+//     // execute quit ?
+//     // à faire à part (while(strcmp(args[0], "quit"))) ou renvoyer une valeur différente de toutes les autres fonction
+//     if(args) {
+//         printf("here");
+//     }
 
-void handle_main(char **args) {
+//     printf("%p\n", blockchain);
+// }
+
+void handle_main(t_node **blockchain, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
@@ -157,7 +167,6 @@ void handle_main(char **args) {
         {"rm", handle_rm},
         {"ls", handle_ls},
         {"sync", handle_sync},
-        {"quit", handle_quit},
         {"", NULL}
     };
 
@@ -166,7 +175,7 @@ void handle_main(char **args) {
     while(tabs[i].command[0]) {
         if(my_strcmp(tabs[i].command, args[ARGS_STEP]) == 0) {
             ARGS_STEP++;
-            tabs[i].function_handler(args);
+            tabs[i].function_handler(blockchain, args);
             break;
         }
 
@@ -179,7 +188,7 @@ void handle_main(char **args) {
     }
 }
 
-void check_command(char *command) {
+void check_command(t_node **blockchain, char *command) {
     size_t length = my_strlen(command);
 
     if (length == 0) {
@@ -196,7 +205,7 @@ void check_command(char *command) {
 
     ARGS_STEP = 0;
 
-    handle_main(args);
+    handle_main(blockchain, args);
 
     free_split(args);
 }

@@ -5,37 +5,53 @@
 /*
     NID is ALWAYS supposed to be a correct value (int)
 */
-// typedef struct s_block {
-//     char *bid;
-//     struct s_block *next;
-// } t_block;
 
-// typedef struct s_node {
-//     int nid;
-//     t_block *first_block;
-//     struct s_node *next;
-// } t_node;
-
-bool add_node(t_node *node, int nid) {
-    if (!node) {
-        print_error(4);
-        return false;
+t_node *add_node(t_node **blockchain_address, int nid) {
+    t_node *new_node = malloc(sizeof(t_node));
+    if (!new_node) {
+        printf("error : 1\n"); // free ?
+        return NULL;
     }
-    //assert we are at the last node
-    while (node->next) {
+
+    new_node->nid = nid;
+    new_node->next = NULL;
+    
+    // empty list
+    if (*blockchain_address == NULL) { 
+        *blockchain_address = new_node;
+    }
+
+    t_node *node = *blockchain_address;
+    
+    while (node->next != NULL) {
         node = node->next;
     }
+    
+    node->next = new_node;
 
-    // malloc
-    node->next = smalloc(sizeof(t_node));
-    if(!node->next) {
-        print_error(1);
-        return false;
-    }
-
-    node->next->nid = nid;
-    return true;
+    return new_node;
 }
+
+// bool add_node(t_node *node, int nid) {
+//     if (!node) {
+//         print_error(4);
+//         return false;
+//     }
+//     //assert we are at the last node
+//     while (node->next) {
+//         node = node->next;
+//     }
+
+//     // malloc
+//     node->next = smalloc(sizeof(t_node));
+//     if(!node->next) {
+//         print_error(1);
+//         return false;
+//     }
+
+//     node->next->nid = nid;
+//     return true;
+// }
 
 bool rm_node(t_node *node, int nid) {
 

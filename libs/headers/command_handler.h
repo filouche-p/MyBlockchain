@@ -12,19 +12,18 @@
 
 typedef struct s_handler {
     const char *command;
-    void (*function_handler)(char **args);
+    void (*function_handler)(t_node **blockchain, char **args);
 } t_handler;
 
-void handle_add_node(char **args);
-void handle_add_block(char **args);
-void handle_rm_node(char **args);
-void handle_rm_block(char **args);
-void handle_add(char **args);
-void handle_rm(char **args);
-void handle_ls(char **args);
-void handle_sync(char **args);
-void handle_quit(char **args);
-void handle_main(char **args);
-void check_command(char *command);
+void handle_add_node(t_node **blockchain, char **args);
+void handle_add_block(t_node **blockchain, char **args);
+void handle_rm_node(t_node **blockchain, char **args);
+void handle_rm_block(t_node **blockchain, char **args);
+void handle_add(t_node **blockchain, char **args);
+void handle_rm(t_node **blockchain, char **args);
+void handle_ls(t_node **blockchain, char **args);
+void handle_sync(t_node **blockchain, char **args);
+void handle_main(t_node **blockchain, char **args);
+void check_command(t_node **blockchain, char *command);
 
 #endif

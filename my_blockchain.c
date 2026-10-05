@@ -64,6 +64,10 @@ char *read_blockchain() {
 // }
 
 int main(void) {
+    // my_blockchain def
+    //!sync
+    t_node *blockchain = NULL;
+
     size_t i = 0;
     while(i < 50) {
         char sync_state = 's';
@@ -71,7 +75,7 @@ int main(void) {
 
         printf("[%c%d", sync_state, n_node);
 
-        char *res = input("]> ", 100);
+        char *res = input("]> ", 3);
 
         if(my_strcmp(res, "quit") == 0) {
             free(res);
@@ -82,7 +86,7 @@ int main(void) {
             printf("\n");
         }
         
-        check_command(res);
+        check_command(&blockchain, res);
 
         free(res);
 
