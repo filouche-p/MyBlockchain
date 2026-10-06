@@ -32,24 +32,12 @@ bool add_node(t_node **blockchain_address, int nid) {
     return true;
 }
 
-void ls_node(t_node **blockchain_address) {
-    print();
-    //! need to ls block as well
-    t_node *node = *blockchain_address;
-
-    while (node) {
-        printf("%d->", node->nid);
-        node = node->next;
-    }
-
-    printf("(null)\n");
-}
-
 bool rm_node(t_node **blockchain_address, int nid) {
     if (!blockchain_address || !(*blockchain_address)) {
-        printf("rm : empty blockchain adress\n");
         return false;
     }
+
+    printf("deprecated please free the sub block\n");
 
     t_node *head = *blockchain_address;
     t_node *temp_to_free = NULL;

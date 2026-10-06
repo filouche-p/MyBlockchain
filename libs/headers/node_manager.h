@@ -5,6 +5,5 @@
 
 bool add_node(t_node **blockchain_address, int nid);
 bool rm_node(t_node **blockchain_address, int nid);
-void ls_node(t_node **blockchain_address);
 
 #endif

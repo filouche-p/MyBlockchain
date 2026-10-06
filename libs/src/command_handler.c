@@ -8,6 +8,7 @@
 #include "../headers/command_handler.h"
 #include "../headers/node_manager.h"
 #include "../headers/block_manager.h"
+#include "../headers/command_sup.h"
 
 size_t ARGS_STEP = 0;
 
@@ -75,9 +76,21 @@ void handle_rm_block(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
         print_error(6);
         return;
+    } else if (!check_bid(args[ARGS_STEP])) {
+        print_error(3);
+        return;
+    } else if (!args[ARGS_STEP + 1] || !can_be_int(args[ARGS_STEP + 1])) {
+        // we don't use check_nid cause it check for unicity
+        print_error(2);
+        return;
     }
 
     printf("%p\n", blockchain_adress);
+    int nid = str_to_int(args[ARGS_STEP + 1]);
+    char *bid = args[ARGS_STEP];
+
+    bool res = rm_block(blockchain_adress, nid, bid);
+    printf("rm res : %d\n", res);
 }
 
 
@@ -147,13 +160,14 @@ void handle_ls(t_node **blockchain_adress, char **args) {
     //     print_error(6);
     //     return;
     // }
+
     // printf("%s\n", args[0]);
     // flags -l ?
 
     // printf("%p\n", blockchain);
 
     (void)args;
-    ls_node(blockchain_adress);
+    ls(blockchain_adress);
 }
 
 void handle_sync(t_node **blockchain_adress, char **args) {

@@ -265,7 +265,8 @@ bool check_nid(t_node **blockchain, const char *supposed_nid) {
 }
 
 bool check_bid(const char *bid_str) {
-    print();
+    // print();
+    printf("deprecated please make a full check bid\n");
     //! bid need to be unique in the specifed node
     if (!bid_str && bid_str[0] != '\0') {
         return false;
@@ -295,4 +296,27 @@ int str_to_int(const char *string) {
     }
 
     return res * sign;
+}
+
+char *my_strcpy(char *string1, const char *string2) {
+    size_t i = 0;
+    while (string2[i]) {
+        string1[i] = string2[i];
+        i++;
+    }
+
+    string1[i] = '\0';
+
+    return string1;
+}
+
+char *my_strdup(const char *string) {
+    char *res = smalloc(my_strlen(string) + 1);
+    
+    if (!res) {
+        print_error(1);
+        return NULL;
+    }
+
+    return my_strcpy(res, string);
 }

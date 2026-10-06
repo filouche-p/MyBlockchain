@@ -34,5 +34,8 @@ size_t array_len(char **array);
 int my_strcmp(const char *s1, const char *s2);
 bool can_be_int(const char *suppossed_number);
 int str_to_int(const char *string);
+char *my_strcpy(char *string1, const char *string2);
+char *my_strdup(const char *string);
+
 
 #endif
