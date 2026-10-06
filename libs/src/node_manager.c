@@ -5,22 +5,23 @@
     NID is ALWAYS supposed to be a correct value (int)
 */
 
-void add_node(t_node **blockchain_address, int nid) {
+bool add_node(t_node **blockchain_address, int nid) {
     t_node *new_node = malloc(sizeof(t_node));
     t_node *node = *blockchain_address; // *blockchain_address is the head
 
     if (!new_node) {
         print_error(1); //! free ?
-        return;
+        return false;
     }
 
     new_node->nid = nid;
     new_node->next = NULL;
+    new_node->first_block = NULL;
     
     // empty list
     if (!(*blockchain_address)) {
         *blockchain_address = new_node;
-        return;
+        return true;
     }
     
     while (node->next != NULL) {
@@ -28,10 +29,12 @@ void add_node(t_node **blockchain_address, int nid) {
     }
     
     node->next = new_node;
+    return true;
 }
 
 void ls_node(t_node **blockchain_address) {
-    // print();
+    print();
+    //! need to ls block as well
     t_node *node = *blockchain_address;
 
     while (node) {

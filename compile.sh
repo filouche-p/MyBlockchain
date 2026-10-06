@@ -1,0 +1,1 @@
+make re && make clean && clear && clear && ./my_blockchain

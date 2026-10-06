@@ -265,7 +265,7 @@ bool check_nid(t_node **blockchain, const char *supposed_nid) {
 }
 
 bool check_bid(const char *bid_str) {
-    // print();
+    print();
     //! bid need to be unique in the specifed node
     if (!bid_str && bid_str[0] != '\0') {
         return false;

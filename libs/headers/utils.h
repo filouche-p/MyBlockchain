@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 typedef struct s_block {
-    char *bid;
+    const char *bid;
     struct s_block *next;
 } t_block;
 
