@@ -12,9 +12,13 @@ size_t ARGS_STEP = 0;
 
 // Handler Add
 void handle_add_node(t_node **blockchain, char **args) {
-    if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
+    if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
+    } else if (!check_nid(blockchain, args[ARGS_STEP])) {
+        print_error(2);
+        return;
+        // sub separated check for more precise error
     }
 
     int nid = str_to_int(args[ARGS_STEP]);
@@ -33,12 +37,13 @@ void handle_add_block(t_node **blockchain, char **args) {
 
 // Handler Rm
 void handle_rm_node(t_node **blockchain, char **args) {
-    if(!args || !args[ARGS_STEP] || !check_nid(args[ARGS_STEP])) {
+    if(!args || !args[ARGS_STEP]) {
         print_error(6);
         return;
     }
 
-    bool success = rm_node(blockchain, str_to_int(args[ARGS_STEP]));
+    int nid = str_to_int(args[ARGS_STEP]);
+    bool success = rm_node(blockchain, nid);
     if(!success) {
         print_error(4);
     }
@@ -170,7 +175,6 @@ void handle_main(t_node **blockchain, char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        printf("not found brother\n");
         print_error(6);
         return;
     }

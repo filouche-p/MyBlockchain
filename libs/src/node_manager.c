@@ -31,7 +31,7 @@ void add_node(t_node **blockchain_address, int nid) {
 }
 
 void ls_node(t_node **blockchain_address) {
-    print();
+    // print();
     t_node *node = *blockchain_address;
 
     while (node) {
@@ -44,6 +44,7 @@ void ls_node(t_node **blockchain_address) {
 
 bool rm_node(t_node **blockchain_address, int nid) {
     if (!blockchain_address || !(*blockchain_address)) {
+        printf("rm : empty blockchain adress\n");
         return false;
     }
 

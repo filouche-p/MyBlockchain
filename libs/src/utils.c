@@ -5,18 +5,20 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "../headers/utils.h"
+
 void print_error(size_t error_code) {
     const char *errors[] = {
         "",
         "nok: no more resources available on the computer\n",
-        "nok: this node already exists\n",
+        "nok: this node already exists or the nid is not valid (only number are accepted).\n",
         "nok: this block already exists\n",
         "nok: node doesn't exist\n",
         "nok: block doesn't exist\n",
         "nok: command not found\n"
     };
 
-    const int length[] = { 0, 49, 30, 31, 24, 25, 23};
+    const int length[] = { 0, 49, 82, 31, 24, 25, 23};
 
     if (1 <= error_code && error_code <= 6) {
         write(2, errors[error_code], length[error_code]);
@@ -69,7 +71,7 @@ size_t array_len(char **array) {
     return i;
 }
 
-size_t count_words(char *str, char sep) {
+size_t count_words(const char *str, const char sep) {
     size_t count = 0;
     size_t i = 0;
 
@@ -220,25 +222,51 @@ int my_strcmp(const char *s1, const char *s2) {
     return (unsigned char)*s1 - (unsigned char)*s2;
 }
 
-bool check_nid(const char *string) {
-    //! every nid need to be unique
-    if (!string || string[0] == '\0') {
+bool can_be_int(const char *suppossed_number) {
+    if (!suppossed_number || suppossed_number[0] == '\0') {
         return false;
     }
-
-    print();
     
     size_t i = 0;
-
-    if (*(string + i))
-    while('0' <= *(string + i) && *(string + i) <= '9') {
+    while('0' <= *(suppossed_number + i) && *(suppossed_number + i) <= '9') {
         i++;
     }
 
-    return my_strlen(string) == i;
+    if (my_strlen(suppossed_number) != i) {
+        return false;
+    }
+
+    return true;
+}
+
+bool check_nid(t_node **blockchain, const char *supposed_nid) {
+    if (!can_be_int(supposed_nid)) {
+        return false;
+    } else if (*blockchain == NULL) {
+        return true;
+    }
+
+    int valid_nid = str_to_int(supposed_nid);
+    t_node *node = *blockchain;
+
+    if(valid_nid == node->nid) {
+        return false;
+    }
+
+    while(node->next != NULL) {
+        if(valid_nid == node->nid) {
+            return false;
+        }
+        node = node->next;
+    }
+
+    return true;
+
 }
 
 bool check_bid(const char *bid_str) {
+    // print();
+    //! bid need to be unique in the specifed node
     if (!bid_str && bid_str[0] != '\0') {
         return false;
     }

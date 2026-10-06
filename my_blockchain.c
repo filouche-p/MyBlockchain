@@ -68,8 +68,7 @@ int main(void) {
     //!sync
     t_node *blockchain = NULL;
 
-    size_t i = 0;
-    while(i < 10) {
+    while(true) {
         char sync_state = 's';
         int n_node = 0;
 
@@ -89,8 +88,6 @@ int main(void) {
         check_command(&blockchain, res);
 
         free(res);
-
-        i++;
     }
 
     return 0;
