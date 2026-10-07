@@ -15,88 +15,72 @@ size_t ARGS_STEP = 0;
 // Handler Add
 void handle_add_node(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     } else if (!check_nid(blockchain_adress, args[ARGS_STEP])) {
-        print_error(2);
+        print_error(NODE_ALREADY_EXISTS);
         return;
         //! sub separated check for more precise error
     }
 
     int nid = str_to_int(args[ARGS_STEP]);
-    
-    bool res = add_node(blockchain_adress, nid);
-    if(!res) {
-        //? impossible ?
-        print_error(2);
-        return;
-    }
+    add_node(blockchain_adress, nid);
 }
 
 void handle_add_block(t_node **blockchain_adress, char **args) {
     printf("currently adding block\n");
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     } else if (!check_bid(args[ARGS_STEP])) {
-        print_error(3);
+        print_error(BLOCK_ALREADY_EXISTS);
         return;
     } else if (!args[ARGS_STEP + 1] || !can_be_int(args[ARGS_STEP + 1])) {
         // we don't use check_nid cause it check for unicity
-        print_error(2);
+        print_error(NODE_ALREADY_EXISTS);
         return;
     }
 
     int nid = str_to_int(args[ARGS_STEP + 1]);
     char *bid = args[ARGS_STEP];
 
-    bool res = add_block(blockchain_adress, nid, bid);
-    if (!res) {
-        // we don't have enought info to print correct error
-        print_error(1);
-        return;
-    }
+    add_block(blockchain_adress, nid, bid);
 }
 
 // Handler Rm
 void handle_rm_node(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
     int nid = str_to_int(args[ARGS_STEP]);
-    bool success = rm_node(blockchain_adress, nid);
-    if(!success) {
-        print_error(4);
-    }
+    rm_node(blockchain_adress, nid);
 }
 
 void handle_rm_block(t_node **blockchain_adress, char **args) {
-    if(!args || !args[ARGS_STEP] || !check_bid(args[ARGS_STEP])) {
-        print_error(6);
+    if(!args || !args[ARGS_STEP]) {
+        print_error(COMMAND_NOT_FOUND);
         return;
     } else if (!check_bid(args[ARGS_STEP])) {
-        print_error(3);
+        print_error(BLOCK_ALREADY_EXISTS);
         return;
     } else if (!args[ARGS_STEP + 1] || !can_be_int(args[ARGS_STEP + 1])) {
         // we don't use check_nid cause it check for unicity
-        print_error(2);
+        print_error(NODE_ALREADY_EXISTS);
         return;
     }
 
-    printf("%p\n", blockchain_adress);
     int nid = str_to_int(args[ARGS_STEP + 1]);
     char *bid = args[ARGS_STEP];
 
-    bool res = rm_block(blockchain_adress, nid, bid);
-    printf("rm res : %d\n", res);
+    rm_block(blockchain_adress, nid, bid);
 }
 
 
 void handle_add(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
@@ -119,14 +103,14 @@ void handle_add(t_node **blockchain_adress, char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 }
 
 void handle_rm(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
@@ -149,30 +133,21 @@ void handle_rm(t_node **blockchain_adress, char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 }
 
 void handle_ls(t_node **blockchain_adress, char **args) {
-    // if(!args || !args[ARGS_STEP]) {
-    //     printf("no args ls detect\n");
-    //     print_error(6);
-    //     return;
-    // }
-
-    // printf("%s\n", args[0]);
     // flags -l ?
 
-    // printf("%p\n", blockchain);
-
     (void)args;
-    ls(blockchain_adress);
+    ls(blockchain_adress, args[ARGS_STEP] && my_strcmp(args[ARGS_STEP], "-l") == 0);
 }
 
 void handle_sync(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
@@ -186,7 +161,7 @@ void handle_sync(t_node **blockchain_adress, char **args) {
 
 void handle_main(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
@@ -211,7 +186,7 @@ void handle_main(t_node **blockchain_adress, char **args) {
     }
 
     if(tabs[i].command[0] == '\0') {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 }
@@ -220,13 +195,13 @@ void check_command(t_node **blockchain_adress, char *command) {
     size_t length = my_strlen(command);
 
     if (length == 0) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         return;
     }
 
     char **args = split(command, ' ');
     if(!args) {
-        print_error(6);
+        print_error(COMMAND_NOT_FOUND);
         free_split(args);
         return;
     }

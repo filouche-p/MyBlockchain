@@ -40,7 +40,7 @@ void *my_memset(void *ptr, int value, size_t size) {
 void *smalloc(size_t size) {
     void *ptr = malloc(size);
     if (!ptr) {
-        print_error(1);
+        print_error(NO_MORE_RESSOURCES);
         return NULL;
     }
 
@@ -116,7 +116,7 @@ char **split(char *string, char sep) {
     size_t words = count_words(string, sep);
     char **res = smalloc((words + 1) * sizeof(char *));
     if (!res) {
-        print_error(1);
+        print_error(NO_MORE_RESSOURCES);
         return NULL;
     }
     
@@ -182,7 +182,10 @@ char *input(char *printed_text, size_t max_size) {
     ssize_t bytes_read = read(0, buff, max_size);
 
     if (bytes_read <= 0) {
-        if (bytes_read == -1) print_error(1);
+        if (bytes_read == -1) {
+            print_error(NO_MORE_RESSOURCES);
+        }
+
         free(buff);
         return NULL;
     }
@@ -281,7 +284,7 @@ int str_to_int(const char *string) {
     int sign = 1;
 
     if (!string) {
-        print_error(1);
+        print_error(NO_MORE_RESSOURCES);
         return 0;
     }
 
@@ -314,9 +317,25 @@ char *my_strdup(const char *string) {
     char *res = smalloc(my_strlen(string) + 1);
     
     if (!res) {
-        print_error(1);
+        print_error(NO_MORE_RESSOURCES);
         return NULL;
     }
 
     return my_strcpy(res, string);
+}
+
+ssize_t my_index(const char *string, char element) {
+    size_t i = 0;
+
+    while (string[i] != '\0') {
+        if (string[i] == element) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+bool contains(const char *string, char element) {
+    return (bool)(my_index(string, element) + 1);
 }

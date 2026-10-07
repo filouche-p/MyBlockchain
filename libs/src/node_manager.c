@@ -5,13 +5,13 @@
     NID is ALWAYS supposed to be a correct value (int)
 */
 
-bool add_node(t_node **blockchain_address, int nid) {
+void add_node(t_node **blockchain_address, int nid) {
     t_node *new_node = malloc(sizeof(t_node));
     t_node *node = *blockchain_address; // *blockchain_address is the head
 
     if (!new_node) {
-        print_error(1); //! free ?
-        return false;
+        print_error(NO_MORE_RESSOURCES); //! free ?
+        return;
     }
 
     new_node->nid = nid;
@@ -21,7 +21,7 @@ bool add_node(t_node **blockchain_address, int nid) {
     // empty list
     if (!(*blockchain_address)) {
         *blockchain_address = new_node;
-        return true;
+        return;
     }
     
     while (node->next != NULL) {
@@ -29,12 +29,12 @@ bool add_node(t_node **blockchain_address, int nid) {
     }
     
     node->next = new_node;
-    return true;
+    return;
 }
 
-bool rm_node(t_node **blockchain_address, int nid) {
+void rm_node(t_node **blockchain_address, int nid) {
     if (!blockchain_address || !(*blockchain_address)) {
-        return false;
+        return;
     }
 
     printf("deprecated please free the sub block\n");
@@ -45,7 +45,7 @@ bool rm_node(t_node **blockchain_address, int nid) {
     if (head->nid == nid) {
         *blockchain_address = head->next;
         free(head);
-        return true;
+        return;
     }
 
     t_node *node = head;
@@ -55,11 +55,11 @@ bool rm_node(t_node **blockchain_address, int nid) {
             temp_to_free = node->next;
             node->next = node->next->next;
             free(temp_to_free);
-            return true; // We can exit the function cause nid is unique to every node
+            return; // We can exit the function cause nid is unique to every node
         } else {
             node = node->next;
         }
     }
 
-    return false;
+    return;
 }

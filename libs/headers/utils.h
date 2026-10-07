@@ -8,8 +8,15 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#define NO_MORE_RESSOURCES 1
+#define NODE_ALREADY_EXISTS 2
+#define BLOCK_ALREADY_EXISTS 3
+#define NODE_DOESNT_EXISTS 4
+#define BLOCK_DOESNT_EXISTS 5
+#define COMMAND_NOT_FOUND 6
+
 typedef struct s_block {
-    const char *bid;
+    char *bid;
     struct s_block *next;
 } t_block;
 
@@ -36,6 +43,7 @@ bool can_be_int(const char *suppossed_number);
 int str_to_int(const char *string);
 char *my_strcpy(char *string1, const char *string2);
 char *my_strdup(const char *string);
-
+ssize_t my_index(const char *string, char element);
+bool contains(const char *string, char element);
 
 #endif

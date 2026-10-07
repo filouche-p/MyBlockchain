@@ -1,12 +1,12 @@
 #include "../headers/utils.h"
 
-void ls(t_node **blockchain_address) {
+void ls(t_node **blockchain_address, bool show_block) {
     t_node *node = *blockchain_address;
 
     while(node) {
-        printf("%d : ", node->nid);
+        printf("%d%s", node->nid, (show_block ? " : " : ""));
 
-        if(node->first_block) {
+        if(node->first_block && show_block) {
             t_block *block = node->first_block;
             
             while(block) {
@@ -15,9 +15,19 @@ void ls(t_node **blockchain_address) {
             }
         }
 
-        printf("(null)\n");
+        printf("\n");
+        node = node->next;
+    }
+}
+
+size_t blockchain_len(t_node **blockchain_address) {
+    size_t i = 0;
+    t_node *node = *blockchain_address;
+
+    while(node) {
+        i++;
         node = node->next;
     }
 
-    printf("(null)\n");
+    return i;
 }

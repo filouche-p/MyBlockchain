@@ -5,9 +5,9 @@
     BID is ALWAYS supposed true in these functions
 */
 
-bool add_block(t_node **blockchain_adress, int nid, const char *bid) {
+void add_block(t_node **blockchain_adress, int nid, const char *bid) {
     if (blockchain_adress == NULL || *blockchain_adress == NULL) {
-        return false;
+        return;
     }
 
     t_node *node = *blockchain_adress;
@@ -16,8 +16,8 @@ bool add_block(t_node **blockchain_adress, int nid, const char *bid) {
         if(node->nid == nid) {
             t_block *new_block = smalloc(sizeof(t_block));
             if (!new_block) {
-                print_error(1);
-                return true; // it fail but not bc of classic error so we return true to avoid double printing
+                print_error(NO_MORE_RESSOURCES);
+                return; // it fail but not bc of classic error so we return true to avoid double printing
             }
 
             new_block->bid = my_strdup(bid);
@@ -34,51 +34,52 @@ bool add_block(t_node **blockchain_adress, int nid, const char *bid) {
                 block->next = new_block;
             }
 
-            return true;
+            return;
         }
 
         node = node->next;
     }
 
-    return false;
+    return;
 }
 
-bool rm_block(t_node **blockchain_address, int nid, const char *bid) {
+void rm_block(t_node **blockchain_address, int nid, const char *bid) {
+    if (!blockchain_address || !*blockchain_address) {
+        print_error(NODE_DOESNT_EXISTS);
+        return;
+    }
+
     t_node *node = *blockchain_address;
 
     while (node) {
         if (node->nid == nid) {
             t_block *block = node->first_block;
-            printf("rm b: %p\n", block);
+            t_block *prev = NULL;
+
             while (block) {
-                // if(block->bid == bid)
-                if(block->next->bid == bid) {
-                    if (block->next->next) {
-                        block->next = block->next->next;
+                if (my_strcmp(block->bid, bid) == 0) {
+                    if (prev == NULL) {
+                        node->first_block = block->next;
                     } else {
-                        block->next = NULL;
+                        prev->next = block->next;
                     }
 
-                    free(block->next);
-                    break;
+                    free(block->bid);
+                    free(block);
+                    return;
                 }
 
-                if(!block->next) {
-                    printf("rm b: %p->%p\n", block, block->next);
-                    print_error(5); // block doesn't exist
-                    return false;
-                }
-
+                prev = block;
                 block = block->next;
             }
-        }
-        if (!node->next) {
-            print_error(4); // nid doesn't exist 
-            return false;
+
+            print_error(BLOCK_DOESNT_EXISTS);
+            return;
         }
 
         node = node->next;
     }
 
-    return false;
+    print_error(NODE_DOESNT_EXISTS);
+    return;
 }
