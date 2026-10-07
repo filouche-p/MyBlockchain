@@ -28,10 +28,13 @@ t_node *load_blockchain(const char *file_path) {
     char **current_node;
     ssize_t bytes_read;
 
+    size_t y = 0;
+
     // we read until read return 0 (eof)
+    // read one by one until we found \n save to variable one for the start one for the end read start from the end -> you got one line = one node, split on space ("split on ->"?) tou got block
     while ((bytes_read = read(fd, buff, block_size_read)) > 0) {
         printf("new read\n");
-        current_node = split(buff, ' ');
+        current_node = split(split(buff, '\n')[y], ' ');
 
         int nid = str_to_int(current_node[0]);
 
@@ -50,6 +53,8 @@ t_node *load_blockchain(const char *file_path) {
             printf("block added : %d : %s\n", nid, bid);
             i++;
         }
+
+        y++;
     }
 
     if (bytes_read == -1) {
