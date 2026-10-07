@@ -45,5 +45,6 @@ char *my_strcpy(char *string1, const char *string2);
 char *my_strdup(const char *string);
 ssize_t my_index(const char *string, char element);
 bool contains(const char *string, char element);
+void move_cursor(int fd, ssize_t bytes_to_skip);
 
 #endif

@@ -19,18 +19,12 @@
 int main(void) {
     //!sync
     t_node *blockchain = load_blockchain(".blockchain.save");
-    if (blockchain) {
-        printf("successfully loaded blockchain at %p\n", blockchain);
-        printf("first node : %d\n", blockchain->nid);
-        printf("%lu\n", blockchain_len(&blockchain));
-    }
-
 
     while(true) {
         char sync_state = 's';
-        int n_node = 0;
+        size_t n_node = blockchain_len(&blockchain);
 
-        printf("[%c%d", sync_state, n_node);
+        printf("[%c%lu", sync_state, n_node);
 
         char *res = input("]> ", 50);
 

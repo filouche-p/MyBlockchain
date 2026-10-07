@@ -339,3 +339,25 @@ ssize_t my_index(const char *string, char element) {
 bool contains(const char *string, char element) {
     return (bool)(my_index(string, element) + 1);
 }
+
+void move_cursor(int fd, ssize_t bytes_to_skip) {
+    if (fd < 0) {
+        return;
+    }
+
+    ssize_t to_read;
+    ssize_t bytes_read;
+    char trash_buff[1024];
+
+    while (bytes_to_skip) {
+        to_read = bytes_to_skip > 1024 ? 1024 : bytes_to_skip; // we read buff size or the rest
+
+        bytes_read = read(fd, trash_buff, to_read);
+        if (bytes_read == -1) { //* error or EOF
+            break;
+        }
+
+        //*we cycle
+        bytes_to_skip -= bytes_read;
+    }
+}
