@@ -361,3 +361,45 @@ void move_cursor(int fd, ssize_t bytes_to_skip) {
         bytes_to_skip -= bytes_read;
     }
 }
+
+size_t int_len(unsigned int integer, int base) {
+    size_t len = 0;
+
+    do {
+        len++;
+        integer /= base;
+    } while (integer != 0);
+
+    return len;
+}
+
+char *base_to_str(int n, int base) {
+    char *str;
+    char *digits = "0123456789ABCDEF";
+    if (base < 2 || base > 16) return NULL;
+
+    int len = int_len(n, base);
+    bool is_negative = n < 0;
+    
+    unsigned int un = is_negative ? -(unsigned int)n : (unsigned int)n;
+
+    int total_len = len + (is_negative ? 1 : 0);
+    
+    str = malloc(sizeof(char) * (total_len + 1));
+    if (!str) {
+        return NULL;
+    }
+
+    str[len] = '\0';
+
+    do {
+        str[--total_len] = digits[un % base];
+        un /= base;
+    } while (un);
+
+    if (is_negative) {
+        str[0] = '-';
+    }
+    
+    return str;
+}

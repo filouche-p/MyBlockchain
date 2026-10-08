@@ -46,5 +46,7 @@ char *my_strdup(const char *string);
 ssize_t my_index(const char *string, char element);
 bool contains(const char *string, char element);
 void move_cursor(int fd, ssize_t bytes_to_skip);
+size_t int_len(unsigned int integer, int base);
+char *base_to_str(int n, int base);
 
 #endif

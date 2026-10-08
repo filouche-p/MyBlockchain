@@ -42,5 +42,7 @@ int main(void) {
         free(res);
     }
 
+    save_blockchain(&blockchain, ".blockchain.save");
+
     return 0;
 }
