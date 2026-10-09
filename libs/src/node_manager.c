@@ -38,8 +38,6 @@ void rm_node(t_node **blockchain_address, int nid, bool delete_all) {
         return;
     }
 
-    printf("deprecated please free the sub block\n");
-
     t_node *head = *blockchain_address;
     t_node *temp_to_free = NULL;
 

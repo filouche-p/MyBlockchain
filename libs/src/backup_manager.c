@@ -92,6 +92,8 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
         return;
     } 
 
+    printf("deprecated check write return\n");
+
     while(node) {
         char *nid = base_to_str(node->nid, 10);
         write(fd, nid, my_strlen(nid));

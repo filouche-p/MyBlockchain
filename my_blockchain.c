@@ -44,5 +44,9 @@ int main(void) {
 
     save_blockchain(&blockchain, ".blockchain.save");
 
+    /*
+        Is synced = tous les noeuds ont les mêmes blocs
+    */
+
     return 0;
 }
