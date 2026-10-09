@@ -54,8 +54,13 @@ void handle_rm_node(t_node **blockchain_adress, char **args) {
         return;
     }
 
-    int nid = str_to_int(args[ARGS_STEP]);
-    rm_node(blockchain_adress, nid);
+    char *supposed_nid = args[ARGS_STEP];
+    if (supposed_nid && my_strlen(supposed_nid) >= 1 && supposed_nid[0] == '*') {
+        rm_node(blockchain_adress, 0, true); // we doesnt care of the nid if delete_all is set to *
+    } else {
+        int nid = str_to_int(args[ARGS_STEP]);
+        rm_node(blockchain_adress, nid, false);
+    }
 }
 
 void handle_rm_block(t_node **blockchain_adress, char **args) {

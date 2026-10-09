@@ -1,5 +1,6 @@
 #include "../headers/utils.h"
 #include "../headers/node_manager.h"
+#include "../headers/block_manager.h"
 
 /*
     NID is ALWAYS supposed to be a correct value (int)
@@ -32,7 +33,7 @@ void add_node(t_node **blockchain_address, int nid) {
     return;
 }
 
-void rm_node(t_node **blockchain_address, int nid) {
+void rm_node(t_node **blockchain_address, int nid, bool delete_all) {
     if (!blockchain_address || !(*blockchain_address)) {
         return;
     }
@@ -42,20 +43,24 @@ void rm_node(t_node **blockchain_address, int nid) {
     t_node *head = *blockchain_address;
     t_node *temp_to_free = NULL;
 
-    if (head->nid == nid) {
+    if (delete_all || (head->nid == nid)) {
         *blockchain_address = head->next;
         free(head);
-        return;
+        if (!delete_all) {
+            return;
+        }
     }
 
-    t_node *node = head;
+    t_node *node = delete_all ? (*blockchain_address)->next : head;
 
     while (node->next != NULL) {
-        if (node->next->nid == nid) {
+        if (delete_all || (node->next->nid == nid)) {
+            if (node->first_block) {
+                rm_block(blockchain_address, nid, "*");
+            }
             temp_to_free = node->next;
             node->next = node->next->next;
             free(temp_to_free);
-            return; // We can exit the function cause nid is unique to every node
         } else {
             node = node->next;
         }

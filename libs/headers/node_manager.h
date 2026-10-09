@@ -4,6 +4,6 @@
 #include "./utils.h"
 
 void add_node(t_node **blockchain_address, int nid);
-void rm_node(t_node **blockchain_address, int nid);
+void rm_node(t_node **blockchain_address, int nid, bool delete_all);
 
 #endif

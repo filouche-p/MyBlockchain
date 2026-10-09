@@ -55,25 +55,33 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid) {
         if (node->nid == nid) {
             t_block *block = node->first_block;
             t_block *prev = NULL;
+            int block_deleted = 0;
 
             while (block) {
-                if (my_strcmp(block->bid, bid) == 0) {
+                if ((my_strcmp(block->bid, bid) == 0) || (my_strcmp(bid, "*") == 0)) {
+                    t_block *to_free = block;
+
                     if (prev == NULL) {
                         node->first_block = block->next;
                     } else {
                         prev->next = block->next;
                     }
 
-                    free(block->bid);
-                    free(block);
-                    return;
-                }
+                    block = block->next; 
 
-                prev = block;
-                block = block->next;
+                    free(to_free->bid);
+                    free(to_free);
+                    
+                    block_deleted = 1;
+                } else {
+                    prev = block;
+                    block = block->next;
+                }
             }
 
-            print_error(BLOCK_DOESNT_EXISTS);
+            if (!block_deleted) {
+                print_error(BLOCK_DOESNT_EXISTS);
+            }
             return;
         }
 

@@ -1,4 +1,5 @@
 #include "../headers/utils.h"
+#include "../headers/command_sup.h"
 
 void ls(t_node **blockchain_address, bool show_block) {
     t_node *node = *blockchain_address;
@@ -7,11 +8,18 @@ void ls(t_node **blockchain_address, bool show_block) {
         printf("%d%s", node->nid, (show_block ? " : " : ""));
 
         if(node->first_block && show_block) {
+            size_t i = 0;
             t_block *block = node->first_block;
+            size_t block_size = block_len(blockchain_address, node->nid);
             
-            while(block) {
-                printf("%s->", block->bid);
+            while(i < block_size) {
+                if (i < block_size - 1) {
+                    printf("%s->", block->bid);
+                } else {
+                    printf("%s", block->bid);
+                }
                 block = block->next;
+                i++;
             }
         }
 
