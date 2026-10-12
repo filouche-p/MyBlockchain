@@ -1,3 +1,4 @@
 *.log
 *todo*
 *.history
+.vscode

@@ -48,5 +48,7 @@ bool contains(const char *string, char element);
 void move_cursor(int fd, ssize_t bytes_to_skip);
 size_t int_len(unsigned int integer, int base);
 char *base_to_str(int n, int base);
+bool has_same_contents(char **array1, char **array2);
+char **array_diff(char **array1, char **array2);
 
 #endif

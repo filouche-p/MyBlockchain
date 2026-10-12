@@ -403,3 +403,84 @@ char *base_to_str(int n, int base) {
     
     return str;
 }
+
+bool has_same_contents(char **array1, char **array2) {
+    printf("deprecated use array_diff == NULL\n");
+    size_t len = array_len(array1);
+
+    if (len != array_len(array2)) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        bool found = false;
+
+        for (size_t j = 0; j < len; j++) {
+            if (my_strcmp(array1[i], array2[j]) == 0) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+char **array_diff(char **array1, char **array2) {
+    size_t len = array_len(array1);
+    if (len != array_len(array2)) {
+        return NULL; // impossible case ?
+    }
+
+    // 1. Allocation correcte pour contenir des pointeurs (sizeof(char*))
+    char **res = smalloc((len + 1) * sizeof(char *)); 
+    if(!res) {
+        print_error(NO_MORE_RESSOURCES);
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t res_idx = 0; // 3. Index spécifique pour remplir res sans laisser de trous
+    
+    while (i < len) {
+        bool found_in_array2 = false;
+        
+        size_t j = 0;
+        while (j < len) {
+            // 4. strcmp renvoie 0 si c'est identique
+            if (strcmp(array1[i], array2[j]) == 0) { 
+                found_in_array2 = true;
+                break;
+            }
+            j++;
+        }
+        
+        // Si le mot de array1 n'a pas été trouvé dans array2 (c'est la différence)
+        if (!found_in_array2) {
+            size_t word_len = my_strlen(array1[i]);
+
+            // 2. Allocation correcte selon la taille du mot (et non du tableau)
+            res[res_idx] = smalloc((word_len + 1) * sizeof(char));
+            if(!res[res_idx]) {
+                print_error(NO_MORE_RESSOURCES);
+                return NULL;
+            }
+
+            strcpy(res[res_idx], array1[i]);
+            
+            // Note: strcpy copie déjà le '\0', la ligne suivante n'est donc plus strictement nécessaire
+            // res[res_idx][word_len] = '\0'; 
+
+            res_idx++;
+        }
+        i++;
+    }
+    
+    res[res_idx] = NULL; // Terminer proprement le tableau à l'index réel
+    
+    return res;
+}

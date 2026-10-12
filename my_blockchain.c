@@ -21,7 +21,7 @@ int main(void) {
     t_node *blockchain = load_blockchain(".blockchain.save");
 
     while(true) {
-        char sync_state = 's';
+        char sync_state = is_sync(&blockchain) ? 's' : '-';
         size_t n_node = blockchain_len(&blockchain);
 
         printf("[%c%lu", sync_state, n_node);

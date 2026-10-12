@@ -28,7 +28,7 @@ void handle_add_node(t_node **blockchain_adress, char **args) {
 }
 
 void handle_add_block(t_node **blockchain_adress, char **args) {
-    printf("currently adding block\n");
+    // printf("currently adding block\n");
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
         return;
@@ -151,10 +151,10 @@ void handle_ls(t_node **blockchain_adress, char **args) {
 }
 
 void handle_sync(t_node **blockchain_adress, char **args) {
-    if(!args || !args[ARGS_STEP]) {
-        print_error(COMMAND_NOT_FOUND);
-        return;
-    }
+    // if(!args || !args[ARGS_STEP]) {
+    //     print_error(COMMAND_NOT_FOUND);
+    //     return;
+    // }
 
     // execute sync
     if(args) {
@@ -162,6 +162,7 @@ void handle_sync(t_node **blockchain_adress, char **args) {
     }
 
     printf("%p\n", blockchain_adress);
+    sync_blockchain(blockchain_adress);
 }
 
 void handle_main(t_node **blockchain_adress, char **args) {
