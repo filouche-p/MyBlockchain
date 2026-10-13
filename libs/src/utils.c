@@ -273,40 +273,45 @@ bool can_be_int(const char *suppossed_number) {
     return true;
 }
 
-bool check_nid(t_node **blockchain, const char *supposed_nid) {
+bool is_nid_valid(t_node **blockchain_address, const char *supposed_nid, bool check_unicity) {
     if (!can_be_int(supposed_nid)) {
         return false;
-    } else if (*blockchain == NULL) {
+    } else if (*blockchain_address == NULL) {
         return true;
     }
 
-    int valid_nid = str_to_int(supposed_nid);
-    t_node *node = *blockchain;
+    int nid = str_to_int(supposed_nid);
+    t_node *node = *blockchain_address;
 
-    if(valid_nid == node->nid) {
-        return false;
-    }
+    // if(nid == node->nid) {
+    //     return false;
+    // }
 
-    while(node->next != NULL) {
-        if(valid_nid == node->nid) {
+    while(node->next && check_unicity) {
+        if(nid == node->nid) {
             return false;
         }
         node = node->next;
     }
 
     return true;
-
 }
 
-bool check_bid(const char *bid_str) {
-    // print();
-    printf("deprecated please make a full check bid\n");
-    //! bid need to be unique in the specifed node
+bool is_bid_valid(t_node *node, const char *bid_str, bool check_unicity) {
     if (!bid_str && bid_str[0] != '\0') {
         return false;
     }
 
-    // any non-null string can be used as string
+    t_block *block = node->first_block;
+
+    while(block && check_unicity) {
+        if (strcmp(block->bid, bid_str) == 0) {
+            return false;
+        }
+        block = block->next;
+    }
+
+    // any non-null unic string can be used
     return true;
 }
 
@@ -461,7 +466,7 @@ bool has_same_contents(char **array1, char **array2) {
     return true;
 }
 
-char **array_diff(char **array1, char **array2) {
+char **array_diff_uni(char **array1, char **array2) {
     size_t len1 = array_len(array1);
     size_t len2 = array_len(array2);
 
@@ -506,4 +511,63 @@ char **array_diff(char **array1, char **array2) {
     res[res_idx] = NULL;
     
     return res;
+}
+
+char **array_diff(char **array1, char **array2) {
+    char **diff1 = array_diff_uni(array1, array2);
+    char **diff2 = array_diff_uni(array2, array1);
+
+    if (!diff1 || !diff2) {
+        if (diff1) free_array(diff1);
+        if (diff2) free_array(diff2);
+        return NULL;
+    }
+
+    size_t len1 = array_len(diff1);
+    size_t len2 = array_len(diff2);
+
+    char **res = smalloc((len1 + len2 + 1) * sizeof(char *));
+    if (!res) {
+        free_array(diff1);
+        free_array(diff2);
+        return NULL;
+    }
+
+    size_t res_idx = 0;
+    
+    for (size_t i = 0; i < len1; i++) {
+        res[res_idx] = diff1[i]; 
+        res_idx++;
+    }
+    
+    for (size_t i = 0; i < len2; i++) {
+        res[res_idx] = diff2[i];
+        res_idx++;
+    }
+    
+    res[res_idx] = NULL;
+
+    //! Don't free sub string cause they have been moved
+    free(diff1);
+    free(diff2);
+
+    return res;
+}
+
+bool nid_exists(t_node **blockchain_address, int schearched_nid) {
+    if (!blockchain_address || !*blockchain_address) {
+        return false;
+    }
+    
+    t_node *node = *blockchain_address;
+
+    while(node) {
+        if (node->nid == schearched_nid) {
+            return true;
+        }
+
+        node = node->next;
+    }
+
+    return false;
 }

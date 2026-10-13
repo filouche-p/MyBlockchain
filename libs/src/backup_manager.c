@@ -7,10 +7,6 @@
 /*
     ASSUMING that the data read in backup file are 100% correct
 */
-//* load blockchain from FILE to RAM
-
-
-//* save blockchain from RAM to FILE
 t_node *load_blockchain(const char *file_path) {
     t_node *node = NULL;
 
@@ -18,7 +14,12 @@ t_node *load_blockchain(const char *file_path) {
     if (fd < 0) return NULL;
         // no backup or very bad error (assuming bad error)
 
-    size_t start_node_index = 0; size_t end_node_index = 0; size_t char_pos = 0; ssize_t bytes_read; char small_buff; char *buff_node = NULL;
+    size_t start_node_index = 0; 
+    size_t end_node_index = 0; 
+    size_t char_pos = 0; 
+    ssize_t bytes_read; 
+    char small_buff; 
+    char *buff_node = NULL;
 
     while ((bytes_read = read(fd, &small_buff, 1)) > 0) {
         if (small_buff == '\n') {
@@ -58,9 +59,19 @@ t_node *load_blockchain(const char *file_path) {
                     size_t i = 1;
                     while (splited_node[i]) {
                         if (splited_node[i][0] != ':' && splited_node[i][0] != '\0') {
-                            char *bid = my_strdup(splited_node[i]);
-                            add_block(&node, nid, bid);
-                            free(bid);
+                            char **blocs_separes = split(splited_node[i], '-');
+                            
+                            if (blocs_separes) {
+                                size_t j = 0;
+                                while (blocs_separes[j]) {
+                                    if (blocs_separes[j][0] != '\0') {
+                                        add_block(&node, nid, blocs_separes[j]);
+                                    }
+                                    j++;
+                                }
+                                free_array(blocs_separes);
+                            }
+                            
                         }
                         i++;
                     }
@@ -79,7 +90,6 @@ t_node *load_blockchain(const char *file_path) {
 
         char_pos++;
     }
-
 
     close(fd);
 

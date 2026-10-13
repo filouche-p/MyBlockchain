@@ -36,8 +36,8 @@ size_t get_file_size(char *filename);
 char *input(char *printed_text, size_t max_size);
 void free_array(char **array);
 void free_blockchain(t_node **blockchain_address);
-bool check_nid(t_node **blockchain, const char *string);
-bool check_bid(const char *_);
+bool is_nid_valid(t_node **blockchain, const char *string, bool check_unicity);
+bool is_bid_valid(t_node *node, const char *bid, bool check_unicity);
 size_t array_len(char **array);
 int my_strcmp(const char *s1, const char *s2);
 bool can_be_int(const char *suppossed_number);
@@ -50,6 +50,7 @@ void move_cursor(int fd, ssize_t bytes_to_skip);
 size_t int_len(unsigned int integer, int base);
 char *base_to_str(int n, int base);
 bool has_same_contents(char **array1, char **array2);
+char **array_diff_uni(char **array1, char **array2);
 char **array_diff(char **array1, char **array2);
 
 #endif

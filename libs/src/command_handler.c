@@ -17,13 +17,13 @@ void handle_add_node(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
         return;
-    } else if (!check_nid(blockchain_adress, args[ARGS_STEP])) {
+    } else if (!is_nid_valid(blockchain_adress, args[ARGS_STEP], true)) {
         print_error(NODE_ALREADY_EXISTS);
         return;
         //! sub separated check for more precise error
     }
 
-    printf("deprecated, print command not found when nid already exists\n");
+    printf("deprecated, print command not found when nid already exists {not sure}\n");
 
     int nid = str_to_int(args[ARGS_STEP]);
     add_node(blockchain_adress, nid);
@@ -33,19 +33,22 @@ void handle_add_block(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
         return;
-    } else if (!check_bid(args[ARGS_STEP])) {
+    }
+
+    char *bid = args[ARGS_STEP];
+    
+    if (!is_bid_valid(*blockchain_adress, bid, true)) {
         print_error(BLOCK_ALREADY_EXISTS);
         return;
-    } else if (!args[ARGS_STEP + 1] || !can_be_int(args[ARGS_STEP + 1])) {
-        // we don't use check_nid cause it check for unicity
+    }
+    
+    if (!args[ARGS_STEP + 1] || !is_nid_valid(blockchain_adress, args[ARGS_STEP + 1], false)) {
         print_error(NODE_ALREADY_EXISTS);
         return;
     }
-
-    printf("deprecated work even if nid doest exist (no error printed)\n");
-
+    
     int nid = str_to_int(args[ARGS_STEP + 1]);
-    char *bid = args[ARGS_STEP];
+    printf("deprecated work even if nid doest exist (no error printed) {not sure}\n");
 
     add_block(blockchain_adress, nid, bid);
 }
@@ -58,30 +61,37 @@ void handle_rm_node(t_node **blockchain_adress, char **args) {
     }
 
     char *supposed_nid = args[ARGS_STEP];
-    if (supposed_nid && my_strlen(supposed_nid) >= 1 && supposed_nid[0] == '*') {
-        rm_node(blockchain_adress, 0, true); // we doesnt care of the nid if delete_all is set to *
-    } else {
-        int nid = str_to_int(args[ARGS_STEP]);
-        rm_node(blockchain_adress, nid, false);
+    if (!supposed_nid) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
     }
+    
+    //* check nid is useless if nid is invalid it can't be delete
+    // if (!is_nid_valid(blockchain_adress, supposed_nid, true)) {
+    //     print_error(NODE_DOESNT_EXISTS);
+    //     return;
+    // }
+
+    int nid = str_to_int(args[ARGS_STEP]);
+    rm_node(blockchain_adress, nid, supposed_nid[0] == '*');
 }
 
 void handle_rm_block(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
         return;
-    } else if (!check_bid(args[ARGS_STEP])) {
-        print_error(BLOCK_ALREADY_EXISTS);
-        return;
-    } else if (!args[ARGS_STEP + 1] || !can_be_int(args[ARGS_STEP + 1])) {
-        // we don't use check_nid cause it check for unicity
-        print_error(NODE_ALREADY_EXISTS);
-        return;
     }
+    
+    char *supposed_nid = args[ARGS_STEP + 1];
+    int nid = str_to_int(supposed_nid);
 
-    int nid = str_to_int(args[ARGS_STEP + 1]);
+    // doesn't need to check if bid or nid is invalid they can't be insert 
+    // if (!nid_exists(blockchain_adress, nid)) {
+    //     print_error(NODE_DOESNT_EXISTS);
+    //     return;
+    // }
+
     char *bid = args[ARGS_STEP];
-
     rm_block(blockchain_adress, nid, bid);
 }
 
@@ -154,6 +164,7 @@ void handle_ls(t_node **blockchain_adress, char **args) {
 void handle_sync(t_node **blockchain_adress, char **args) {
     (void)args;
     sync_blockchain(blockchain_adress);
+    printf("OK\n");
 }
 
 void handle_main(t_node **blockchain_adress, char **args) {
@@ -203,15 +214,7 @@ void check_command(t_node **blockchain_adress, char *command) {
         return;
     }
 
-    // size_t args_len = array_len(args);
-
-    // for(size_t i = 0; i < args_len; i++) {
-    //     printf("%s\n", args[i]);
-    // }
-
     ARGS_STEP = 0;
-
     handle_main(blockchain_adress, args);
-
     free_array(args);
 }

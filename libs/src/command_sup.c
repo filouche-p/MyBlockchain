@@ -37,27 +37,6 @@ size_t blockchain_len(t_node **blockchain_address) {
     return i;
 }
 
-size_t block_len(t_node **blockchain_address, int nid) {
-    printf("deprecated, use get_node_block_len\n");
-    size_t i = 0;
-    t_node *node = *blockchain_address;
-
-    while(node) {
-        if (node->nid == nid) {
-            t_block *block = node->first_block;
-
-            while (block) {
-                i++;
-                block = block->next;
-            }
-        }
-
-        node = node->next;
-    }
-
-    return i;
-}
-
 size_t get_node_block_len(t_node *node) {
     if (!node) return 0;
     
@@ -110,28 +89,42 @@ bool is_sync(t_node **blockchain_address) {
     t_node *current_node = base_node->next;
 
     char **base_blocks = get_blocks(base_node);
-    if (!base_blocks) {
-        return false;
-    }
+    if (!base_blocks) return false;
+    
+    size_t base_len = array_len(base_blocks);
 
     while (current_node) {
         char **current_blocks = get_blocks(current_node);
+        if (!current_blocks) {
+            free(base_blocks);
+            return false;
+        }
 
-        char **diff = array_diff(base_blocks, current_blocks);
-        
-        if (!current_blocks || diff[0]) { // use diff array
+        if (array_len(current_blocks) != base_len) {
             free(base_blocks);
             free(current_blocks);
-            free_array(diff);
+            return false;
+        }
+
+        char **diff = array_diff(base_blocks, current_blocks); 
+        
+        if (!diff || diff[0] != NULL) {
+            free(base_blocks);
+            free(current_blocks);
+            if (diff) {
+                free_array(diff);
+            }
             return false;
         }
 
         free(current_blocks);
         free_array(diff);
+        
         current_node = current_node->next;
     }
 
     free(base_blocks);
+    
     return true;
 }
 
