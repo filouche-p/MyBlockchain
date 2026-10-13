@@ -60,10 +60,13 @@ t_node *load_blockchain(const char *file_path) {
                         if (splited_node[i][0] != ':' && splited_node[i][0] != '\0') {
                             char *bid = my_strdup(splited_node[i]);
                             add_block(&node, nid, bid);
+                            free(bid);
                         }
                         i++;
                     }
                 }
+
+                free_array(splited_node);
             }
 
             start_node_index = char_pos + 1;
@@ -76,6 +79,7 @@ t_node *load_blockchain(const char *file_path) {
 
         char_pos++;
     }
+
 
     close(fd);
 
@@ -104,7 +108,7 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
             t_block *block = node->first_block;
 
             size_t i = 0;
-            size_t block_size = block_len(blockchain_address, node->nid);
+            size_t block_size = get_node_block_len(node);
             
             while(i < block_size) {
                 write(fd, block->bid, my_strlen(block->bid));
@@ -119,6 +123,7 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
 
         write(fd, "\n", 1);
         node = node->next;
+        free(nid);
     }
 
     close(fd);

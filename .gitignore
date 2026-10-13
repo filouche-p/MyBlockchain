@@ -1,4 +1,5 @@
 *.log
 *todo*
 *.history
+*.dSYM
 .vscode

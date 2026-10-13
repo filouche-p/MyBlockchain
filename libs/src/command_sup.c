@@ -14,11 +14,7 @@ void ls(t_node **blockchain_address, bool show_block) {
             size_t block_size = get_node_block_len(node);
             
             while(i < block_size) {
-                if (i < block_size - 1) {
-                    printf("%s->", block->bid);
-                } else {
-                    printf("%s", block->bid);
-                }
+                printf("%s%s", block->bid, (i < block_size - 1) ? "-" : "");
                 block = block->next;
                 i++;
             }
@@ -120,14 +116,18 @@ bool is_sync(t_node **blockchain_address) {
 
     while (current_node) {
         char **current_blocks = get_blocks(current_node);
+
+        char **diff = array_diff(base_blocks, current_blocks);
         
-        if (!current_blocks || !has_same_contents(base_blocks, current_blocks)) {
+        if (!current_blocks || diff[0]) { // use diff array
             free(base_blocks);
             free(current_blocks);
+            free_array(diff);
             return false;
         }
 
         free(current_blocks);
+        free_array(diff);
         current_node = current_node->next;
     }
 
@@ -141,42 +141,57 @@ void sync_blockchain(t_node **blockchain_address) {
     }
 
     t_node *base_node = *blockchain_address;
-    t_node *current_node = base_node->next;
+    t_node *current_node;
 
-    char **base_blocks = get_blocks(base_node);
-    if (!base_blocks) {
-        return; //! ?
-    }
-
+    current_node = base_node->next;
     while (current_node) {
+        char **base_blocks = get_blocks(base_node);
         char **current_blocks = get_blocks(current_node);
-        
-        if (!current_blocks || !has_same_contents(base_blocks, current_blocks)) {
-            //! needs to add miss contents
-            // free(base_blocks);
-            // free(current_blocks);
 
-            char **diff = array_diff(base_blocks, current_blocks);
-            size_t k = 0;
-
-            while(diff[k]) {
-                // printf("%s-", diff[k]);
-                add_block(blockchain_address, current_node->nid, diff[k]);
-                k++;
+        if (base_blocks && current_blocks) {
+            char **diff = array_diff(current_blocks, base_blocks);
+            
+            if (diff) {
+                size_t k = 0;
+                while (diff[k]) {
+                    add_block(blockchain_address, base_node->nid, diff[k]);
+                    free(diff[k]);
+                    k++;
+                }
+                free(diff);
             }
-
-            printf("\n");
-
-            // free(base_blocks);
-            // free(current_blocks);
-            // free(diff);
-            return;
         }
+        
+        if (base_blocks) free(base_blocks);
+        if (current_blocks) free(current_blocks);
 
-        free(current_blocks);
         current_node = current_node->next;
     }
 
-    free(base_blocks);
-    return;
+    char **master_blocks = get_blocks(base_node);
+    if (!master_blocks) return;
+
+    current_node = base_node->next;
+    while (current_node) {
+        char **current_blocks = get_blocks(current_node);
+        
+        if (current_blocks) {
+            char **diff = array_diff(master_blocks, current_blocks);
+            
+            if (diff) {
+                size_t k = 0;
+                while (diff[k]) {
+                    add_block(blockchain_address, current_node->nid, diff[k]);
+                    free(diff[k]);
+                    k++;
+                }
+                free(diff);
+            }
+            free(current_blocks);
+        }
+        
+        current_node = current_node->next;
+    }
+
+    free(master_blocks);
 }

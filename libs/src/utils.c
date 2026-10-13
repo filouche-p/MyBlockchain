@@ -50,10 +50,7 @@ void *smalloc(size_t size) {
 }
 
 size_t my_strlen(const char *string) {
-    if (string == NULL) {
-        return 0;
-    }
-
+    if (string == NULL) return 0;
     size_t i = 0;
 
     while (string[i] != '\0') { i++; }
@@ -199,17 +196,51 @@ char *input(char *printed_text, size_t max_size) {
     return buff;
 }
 
-void free_split(char **split_array) {
-    if (split_array == NULL) return;
+void free_array(char **array) {
+    if (array == NULL) return;
 
     size_t i = 0;
     
-    while (split_array[i] != NULL) {
-        free(split_array[i]);
+    while (array[i]) {
+        free(array[i]);
         i++;
     }
     
-    free(split_array);
+    free(array);
+}
+
+void free_blockchain(t_node **blockchain_address) {
+    if (!blockchain_address || !*blockchain_address) {
+        return;
+    }
+
+    t_node *current_node = *blockchain_address;
+    t_node *tmp_node;
+
+    while (current_node) {
+        tmp_node = current_node->next;
+
+        t_block *current_block = current_node->first_block;
+        t_block *tmp_block;
+        
+        while (current_block) {
+            tmp_block = current_block->next;
+            
+            if (current_block->bid) {
+                free(current_block->bid);
+            }
+            
+            free(current_block);
+            
+            current_block = tmp_block;
+        }
+
+        free(current_node);
+
+        current_node = tmp_node;
+    }
+
+    *blockchain_address = NULL;
 }
 
 int my_strcmp(const char *s1, const char *s2) {
@@ -431,56 +462,48 @@ bool has_same_contents(char **array1, char **array2) {
 }
 
 char **array_diff(char **array1, char **array2) {
-    size_t len = array_len(array1);
-    if (len != array_len(array2)) {
-        return NULL; // impossible case ?
-    }
+    size_t len1 = array_len(array1);
+    size_t len2 = array_len(array2);
 
-    // 1. Allocation correcte pour contenir des pointeurs (sizeof(char*))
-    char **res = smalloc((len + 1) * sizeof(char *)); 
+    char **res = smalloc((len1 + 1) * sizeof(char *)); 
     if(!res) {
         print_error(NO_MORE_RESSOURCES);
         return NULL;
     }
 
     size_t i = 0;
-    size_t res_idx = 0; // 3. Index spécifique pour remplir res sans laisser de trous
+    size_t res_idx = 0;
     
-    while (i < len) {
+    while (i < len1) {
         bool found_in_array2 = false;
         
         size_t j = 0;
-        while (j < len) {
-            // 4. strcmp renvoie 0 si c'est identique
-            if (strcmp(array1[i], array2[j]) == 0) { 
+        while (j < len2) {
+            if (my_strcmp(array1[i], array2[j]) == 0) { 
                 found_in_array2 = true;
                 break;
             }
             j++;
         }
         
-        // Si le mot de array1 n'a pas été trouvé dans array2 (c'est la différence)
         if (!found_in_array2) {
             size_t word_len = my_strlen(array1[i]);
 
-            // 2. Allocation correcte selon la taille du mot (et non du tableau)
             res[res_idx] = smalloc((word_len + 1) * sizeof(char));
             if(!res[res_idx]) {
                 print_error(NO_MORE_RESSOURCES);
                 return NULL;
             }
 
-            strcpy(res[res_idx], array1[i]);
+            my_strcpy(res[res_idx], array1[i]);
             
-            // Note: strcpy copie déjà le '\0', la ligne suivante n'est donc plus strictement nécessaire
-            // res[res_idx][word_len] = '\0'; 
-
+            res[res_idx][word_len] = '\0';
             res_idx++;
         }
         i++;
     }
-    
-    res[res_idx] = NULL; // Terminer proprement le tableau à l'index réel
+
+    res[res_idx] = NULL;
     
     return res;
 }

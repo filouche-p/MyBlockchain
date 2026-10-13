@@ -23,12 +23,13 @@ void handle_add_node(t_node **blockchain_adress, char **args) {
         //! sub separated check for more precise error
     }
 
+    printf("deprecated, print command not found when nid already exists\n");
+
     int nid = str_to_int(args[ARGS_STEP]);
     add_node(blockchain_adress, nid);
 }
 
 void handle_add_block(t_node **blockchain_adress, char **args) {
-    // printf("currently adding block\n");
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
         return;
@@ -40,6 +41,8 @@ void handle_add_block(t_node **blockchain_adress, char **args) {
         print_error(NODE_ALREADY_EXISTS);
         return;
     }
+
+    printf("deprecated work even if nid doest exist (no error printed)\n");
 
     int nid = str_to_int(args[ARGS_STEP + 1]);
     char *bid = args[ARGS_STEP];
@@ -144,24 +147,12 @@ void handle_rm(t_node **blockchain_adress, char **args) {
 }
 
 void handle_ls(t_node **blockchain_adress, char **args) {
-    // flags -l ?
-
     (void)args;
     ls(blockchain_adress, args[ARGS_STEP] && my_strcmp(args[ARGS_STEP], "-l") == 0);
 }
 
 void handle_sync(t_node **blockchain_adress, char **args) {
-    // if(!args || !args[ARGS_STEP]) {
-    //     print_error(COMMAND_NOT_FOUND);
-    //     return;
-    // }
-
-    // execute sync
-    if(args) {
-        printf("here");
-    }
-
-    printf("%p\n", blockchain_adress);
+    (void)args;
     sync_blockchain(blockchain_adress);
 }
 
@@ -208,7 +199,7 @@ void check_command(t_node **blockchain_adress, char *command) {
     char **args = split(command, ' ');
     if(!args) {
         print_error(COMMAND_NOT_FOUND);
-        free_split(args);
+        free_array(args);
         return;
     }
 
@@ -222,5 +213,5 @@ void check_command(t_node **blockchain_adress, char *command) {
 
     handle_main(blockchain_adress, args);
 
-    free_split(args);
+    free_array(args);
 }

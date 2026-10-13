@@ -7,11 +7,11 @@
 */
 
 void add_node(t_node **blockchain_address, int nid) {
-    t_node *new_node = malloc(sizeof(t_node));
+    t_node *new_node = smalloc(sizeof(t_node));
     t_node *node = *blockchain_address; // *blockchain_address is the head
 
     if (!new_node) {
-        print_error(NO_MORE_RESSOURCES); //! free ?
+        print_error(NO_MORE_RESSOURCES);
         return;
     }
 

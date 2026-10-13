@@ -17,9 +17,11 @@
 
 
 int main(void) {
-    //!sync
     t_node *blockchain = load_blockchain(".blockchain.save");
 
+    char *leak = malloc(100);
+    leak[0] = 'A';
+    
     while(true) {
         char sync_state = is_sync(&blockchain) ? 's' : '-';
         size_t n_node = blockchain_len(&blockchain);
@@ -43,6 +45,7 @@ int main(void) {
     }
 
     save_blockchain(&blockchain, ".blockchain.save");
+    free_blockchain(&blockchain);
 
     /*
         Is synced = tous les noeuds ont les mêmes blocs
