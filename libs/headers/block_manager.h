@@ -4,6 +4,6 @@
 #include "./utils.h"
 
 void add_block(t_node **blockchain_adress, int nid, const char *bid);
-void rm_block(t_node **blockchain_address, int nid, const char *bid);
+void rm_block(t_node **blockchain_address, int nid, const char *bid, bool delete_all);
 
 #endif

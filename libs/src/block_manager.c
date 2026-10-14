@@ -9,6 +9,10 @@ void add_block(t_node **blockchain_adress, int nid, const char *bid) {
     if (blockchain_adress == NULL || *blockchain_adress == NULL) {
         return;
     }
+    if(!bid || bid[0] == '*') {
+        print_error(BLOCK_DOESNT_EXISTS);
+        return;
+    }
 
     t_node *node = *blockchain_adress;
 
@@ -43,7 +47,7 @@ void add_block(t_node **blockchain_adress, int nid, const char *bid) {
     return;
 }
 
-void rm_block(t_node **blockchain_address, int nid, const char *bid) {
+void rm_block(t_node **blockchain_address, int nid, const char *bid, bool delete_all) {
     if (!blockchain_address || !*blockchain_address) {
         print_error(NODE_DOESNT_EXISTS);
         return;
@@ -55,10 +59,10 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid) {
         if (node->nid == nid) {
             t_block *block = node->first_block;
             t_block *prev = NULL;
-            int block_deleted = 0;
+            // bool block_deleted = false;
 
             while (block) {
-                if ((my_strcmp(block->bid, bid) == 0) || (my_strcmp(bid, "*") == 0)) {
+                if (delete_all || (my_strcmp(block->bid, bid) == 0)) {
                     t_block *to_free = block;
 
                     if (prev == NULL) {
@@ -68,26 +72,28 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid) {
                     }
 
                     block = block->next; 
-
                     free(to_free->bid);
                     free(to_free);
                     
-                    block_deleted = 1;
+                    // block_deleted = true;
+                    
+                    if (!delete_all) {
+                        return;
+                    }
                 } else {
                     prev = block;
                     block = block->next;
                 }
             }
 
-            if (!block_deleted) {
-                print_error(BLOCK_DOESNT_EXISTS);
-            }
+            // write nothing if the node was already empty
+            // if(!block_deleted) {
+            //     print_error(BLOCK_DOESNT_EXISTS);
+            // }
             return;
         }
-
         node = node->next;
     }
 
     print_error(NODE_DOESNT_EXISTS);
-    return;
 }

@@ -20,10 +20,8 @@ void handle_add_node(t_node **blockchain_adress, char **args) {
     } else if (!is_nid_valid(blockchain_adress, args[ARGS_STEP], true)) {
         print_error(NODE_ALREADY_EXISTS);
         return;
-        //! sub separated check for more precise error
+        //? sub separated check for more precise error
     }
-
-    printf("deprecated, print command not found when nid already exists {not sure}\n");
 
     int nid = str_to_int(args[ARGS_STEP]);
     add_node(blockchain_adress, nid);
@@ -38,6 +36,7 @@ void handle_add_block(t_node **blockchain_adress, char **args) {
     char *bid = args[ARGS_STEP];
     
     if (!is_bid_valid(*blockchain_adress, bid, true)) {
+        printf("false trigger\n");
         print_error(BLOCK_ALREADY_EXISTS);
         return;
     }
@@ -73,26 +72,25 @@ void handle_rm_node(t_node **blockchain_adress, char **args) {
     // }
 
     int nid = str_to_int(args[ARGS_STEP]);
-    rm_node(blockchain_adress, nid, supposed_nid[0] == '*');
+    rm_node(blockchain_adress, nid, (supposed_nid[0] == '*'));
 }
 
 void handle_rm_block(t_node **blockchain_adress, char **args) {
-    if(!args || !args[ARGS_STEP]) {
+    if(!args || !args[ARGS_STEP] || !args[ARGS_STEP + 1]) {
         print_error(COMMAND_NOT_FOUND);
         return;
     }
     
     char *supposed_nid = args[ARGS_STEP + 1];
+    if(!supposed_nid) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
     int nid = str_to_int(supposed_nid);
-
-    // doesn't need to check if bid or nid is invalid they can't be insert 
-    // if (!nid_exists(blockchain_adress, nid)) {
-    //     print_error(NODE_DOESNT_EXISTS);
-    //     return;
-    // }
-
     char *bid = args[ARGS_STEP];
-    rm_block(blockchain_adress, nid, bid);
+
+    rm_block(blockchain_adress, nid, bid, bid[0] == '*');
 }
 
 

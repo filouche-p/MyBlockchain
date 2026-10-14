@@ -34,35 +34,38 @@ void add_node(t_node **blockchain_address, int nid) {
 }
 
 void rm_node(t_node **blockchain_address, int nid, bool delete_all) {
-    if (!blockchain_address || !(*blockchain_address)) {
+    if (!blockchain_address || !*blockchain_address) {
         return;
     }
 
-    t_node *head = *blockchain_address;
-    t_node *temp_to_free = NULL;
+    t_node *current = *blockchain_address;
+    t_node *prev = NULL;
 
-    if (delete_all || (head->nid == nid)) {
-        *blockchain_address = head->next;
-        free(head);
-        if (!delete_all) {
-            return;
-        }
-    }
-
-    t_node *node = delete_all ? (*blockchain_address)->next : head;
-
-    while (node->next != NULL) {
-        if (delete_all || (node->next->nid == nid)) {
-            if (node->first_block) {
-                rm_block(blockchain_address, nid, "*");
+    while (current) {
+        if(delete_all || current->nid == nid) {
+            if(current->first_block) {
+                rm_block(blockchain_address, current->nid, "*", true);
             }
-            temp_to_free = node->next;
-            node->next = node->next->next;
-            free(temp_to_free);
+
+            t_node *to_free = current;
+            
+            if(prev == NULL) {
+                *blockchain_address = current->next;
+            } else {
+                prev->next = current->next;
+            }
+
+            printf("rm_node %p | %d deleted\n", to_free, to_free->nid);
+            
+            current = current->next;
+            free(to_free);
+
+            if (!delete_all) {
+                return;
+            }
         } else {
-            node = node->next;
+            prev = current;
+            current = current->next;
         }
     }
-
-    return;
 }
