@@ -21,7 +21,7 @@ void add_block(t_node **blockchain_adress, int nid, const char *bid) {
             t_block *new_block = smalloc(sizeof(t_block));
             if (!new_block) {
                 print_error(NO_MORE_RESSOURCES);
-                return; // it fail but not bc of classic error so we return true to avoid double printing
+                return;
             }
 
             new_block->bid = my_strdup(bid);
@@ -59,7 +59,6 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid, bool delete
         if (node->nid == nid) {
             t_block *block = node->first_block;
             t_block *prev = NULL;
-            // bool block_deleted = false;
 
             while (block) {
                 if (delete_all || (my_strcmp(block->bid, bid) == 0)) {
@@ -75,8 +74,6 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid, bool delete
                     free(to_free->bid);
                     free(to_free);
                     
-                    // block_deleted = true;
-                    
                     if (!delete_all) {
                         return;
                     }
@@ -86,10 +83,6 @@ void rm_block(t_node **blockchain_address, int nid, const char *bid, bool delete
                 }
             }
 
-            // write nothing if the node was already empty
-            // if(!block_deleted) {
-            //     print_error(BLOCK_DOESNT_EXISTS);
-            // }
             return;
         }
         node = node->next;

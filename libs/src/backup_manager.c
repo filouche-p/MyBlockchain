@@ -12,7 +12,6 @@ t_node *load_blockchain(const char *file_path) {
 
     int fd = open(file_path, O_RDONLY);
     if (fd < 0) return NULL;
-        // no backup or very bad error (assuming bad error)
 
     size_t start_node_index = 0; 
     size_t end_node_index = 0; 
@@ -99,14 +98,13 @@ t_node *load_blockchain(const char *file_path) {
 void save_blockchain(t_node **blockchain_address, char *file_name) {
     t_node *node = *blockchain_address;
 
-    int fd = open(file_name, O_WRONLY | O_CREAT, 0644);
+    int fd = open(file_name, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (fd < 0) {
-        printf("error fd %d\n", fd);
-        print_error(1);
+        print_error(NO_MORE_RESSOURCES);
         return;
-    } 
+    }
 
-    printf("deprecated check write return\n");
+    printf("need to check write return\n");
 
     while(node) {
         char *nid = base_to_str(node->nid, 10);
@@ -125,7 +123,7 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
                 if (i < block_size - 1) {
                     write(fd, "-", 1);
                 }
-                // check for write return
+
                 block = block->next;
                 i++;
             }

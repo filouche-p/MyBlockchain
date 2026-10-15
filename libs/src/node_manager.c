@@ -8,7 +8,7 @@
 
 void add_node(t_node **blockchain_address, int nid) {
     t_node *new_node = smalloc(sizeof(t_node));
-    t_node *node = *blockchain_address; // *blockchain_address is the head
+    t_node *node = *blockchain_address;
 
     if (!new_node) {
         print_error(NO_MORE_RESSOURCES);
@@ -19,7 +19,6 @@ void add_node(t_node **blockchain_address, int nid) {
     new_node->next = NULL;
     new_node->first_block = NULL;
     
-    // empty list
     if (!(*blockchain_address)) {
         *blockchain_address = new_node;
         return;
@@ -55,8 +54,6 @@ void rm_node(t_node **blockchain_address, int nid, bool delete_all) {
                 prev->next = current->next;
             }
 
-            printf("rm_node %p | %d deleted\n", to_free, to_free->nid);
-            
             current = current->next;
             free(to_free);
 

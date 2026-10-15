@@ -8,7 +8,7 @@
 #include "../headers/utils.h"
 
 void print_error(size_t error_code) {
-    const char *errors[] = {
+    static const char *errors[] = {
         "",
         "nok: no more resources available on the computer\n",
         "nok: this node already exists or the nid is not valid (only number are accepted).\n",
@@ -17,13 +17,21 @@ void print_error(size_t error_code) {
         "nok: block doesn't exist\n",
         "nok: command not found\n"
     };
-
-    const int length[] = { 0, 49, 82, 31, 24, 25, 23};
+    
+    static const size_t lengths[] = {
+        0,
+        sizeof("nok: no more resources available on the computer\n") - 1,
+        sizeof("nok: this node already exists or the nid is not valid (only number are accepted).\n") - 1,
+        sizeof("nok: this block already exists\n") - 1,
+        sizeof("nok: node doesn't exist\n") - 1,
+        sizeof("nok: block doesn't exist\n") - 1,
+        sizeof("nok: command not found\n") - 1
+    };
 
     if (1 <= error_code && error_code <= 6) {
-        write(2, errors[error_code], length[error_code]);
+        write(2, errors[error_code], lengths[error_code]);
     } else {
-        write(2, "nok: unknow error code\n", 23);
+        write(2, "nok: unknown error code\n", sizeof("nok: unknown error code\n") - 1);
     }
 }
 
@@ -108,7 +116,6 @@ char *extract_word(char *str, size_t start, size_t length) {
 
 char **split(char *string, char sep) {
     if (string == NULL) return NULL;
-    // sep = (unsigned char)sep;
 
     size_t words = count_words(string, sep);
     char **res = smalloc((words + 1) * sizeof(char *));
@@ -152,7 +159,7 @@ size_t get_file_size(char *filename) {
     }
 
     if (bytes_read == -1) {
-        fprintf(stderr, "nok: no more resources available on the computer\n");
+        print_error(NO_MORE_RESSOURCES);
         close(fd);
         return 0;
     }
@@ -163,7 +170,7 @@ size_t get_file_size(char *filename) {
 
 char *input(char *printed_text, size_t max_size) {
     if (max_size == 0) {
-        // Default size
+        //* Default size
         max_size = 50;
     }
 
@@ -283,11 +290,7 @@ bool is_nid_valid(t_node **blockchain_address, const char *supposed_nid, bool ch
     int nid = str_to_int(supposed_nid);
     t_node *node = *blockchain_address;
 
-    // if(nid == node->nid) {
-    //     return false;
-    // }
-
-    while(node->next && check_unicity) {
+    while(node && check_unicity) {
         if(nid == node->nid) {
             return false;
         }
@@ -298,20 +301,24 @@ bool is_nid_valid(t_node **blockchain_address, const char *supposed_nid, bool ch
 }
 
 bool is_bid_valid(t_node *node, const char *bid_str, bool check_unicity) {
-    if (!bid_str && bid_str[0] != '\0') {
+    if (!bid_str || bid_str[0] == '\0') {
         return false;
+    }
+
+    if (!node) {
+        return true;
     }
 
     t_block *block = node->first_block;
 
     while(block && check_unicity) {
-        if (strcmp(block->bid, bid_str) == 0) {
+        if (my_strcmp(block->bid, bid_str) == 0) {
             return false;
         }
         block = block->next;
     }
 
-    // any non-null unic string can be used
+    // any non-null unique string can be used
     return true;
 }
 
@@ -386,14 +393,13 @@ void move_cursor(int fd, ssize_t bytes_to_skip) {
     char trash_buff[1024];
 
     while (bytes_to_skip) {
-        to_read = bytes_to_skip > 1024 ? 1024 : bytes_to_skip; // we read buff size or the rest
+        to_read = bytes_to_skip > 1024 ? 1024 : bytes_to_skip;
 
         bytes_read = read(fd, trash_buff, to_read);
-        if (bytes_read == -1) { //* error or EOF
+        if (bytes_read == -1) {
             break;
         }
 
-        //*we cycle
         bytes_to_skip -= bytes_read;
     }
 }
@@ -441,7 +447,6 @@ char *base_to_str(int n, int base) {
 }
 
 bool has_same_contents(char **array1, char **array2) {
-    printf("deprecated use array_diff == NULL\n");
     size_t len = array_len(array1);
 
     if (len != array_len(array2)) {

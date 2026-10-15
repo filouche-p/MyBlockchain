@@ -133,58 +133,59 @@ void sync_blockchain(t_node **blockchain_address) {
         return;
     }
 
-    t_node *base_node = *blockchain_address;
-    t_node *current_node;
+    size_t master_capacity = 64;
+    size_t master_len = 0;
+    char **master = smalloc(master_capacity * sizeof(char *));
+    if (!master) return;
 
-    current_node = base_node->next;
-    while (current_node) {
-        char **base_blocks = get_blocks(base_node);
-        char **current_blocks = get_blocks(current_node);
-
-        if (base_blocks && current_blocks) {
-            char **diff = array_diff(current_blocks, base_blocks);
-            
-            if (diff) {
-                size_t k = 0;
-                while (diff[k]) {
-                    add_block(blockchain_address, base_node->nid, diff[k]);
-                    free(diff[k]);
-                    k++;
+    t_node *node = *blockchain_address;
+    while (node) {
+        t_block *block = node->first_block;
+        while (block) {
+            bool already_in_master = false;
+            for (size_t k = 0; k < master_len; k++) {
+                if (my_strcmp(master[k], block->bid) == 0) {
+                    already_in_master = true;
+                    break;
                 }
-                free(diff);
+            }
+            if (!already_in_master) {
+                if (master_len + 1 >= master_capacity) {
+                    master_capacity *= 2;
+                    char **tmp = smalloc(master_capacity * sizeof(char *));
+                    if (!tmp) {
+                        for (size_t k = 0; k < master_len; k++) free(master[k]);
+                        free(master);
+                        return;
+                    }
+                    for (size_t k = 0; k < master_len; k++) tmp[k] = master[k];
+                    free(master);
+                    master = tmp;
+                }
+                master[master_len] = my_strdup(block->bid);
+                if (!master[master_len]) {
+                    for (size_t k = 0; k < master_len; k++) free(master[k]);
+                    free(master);
+                    return;
+                }
+                master_len++;
+            }
+            block = block->next;
+        }
+        node = node->next;
+    }
+    master[master_len] = NULL;
+
+    node = *blockchain_address;
+    while (node) {
+        for (size_t k = 0; k < master_len; k++) {
+            if (is_bid_valid(node, master[k], true)) {
+                add_block(blockchain_address, node->nid, master[k]);
             }
         }
-        
-        if (base_blocks) free(base_blocks);
-        if (current_blocks) free(current_blocks);
-
-        current_node = current_node->next;
+        node = node->next;
     }
 
-    char **master_blocks = get_blocks(base_node);
-    if (!master_blocks) return;
-
-    current_node = base_node->next;
-    while (current_node) {
-        char **current_blocks = get_blocks(current_node);
-        
-        if (current_blocks) {
-            char **diff = array_diff(master_blocks, current_blocks);
-            
-            if (diff) {
-                size_t k = 0;
-                while (diff[k]) {
-                    add_block(blockchain_address, current_node->nid, diff[k]);
-                    free(diff[k]);
-                    k++;
-                }
-                free(diff);
-            }
-            free(current_blocks);
-        }
-        
-        current_node = current_node->next;
-    }
-
-    free(master_blocks);
+    for (size_t k = 0; k < master_len; k++) free(master[k]);
+    free(master);
 }

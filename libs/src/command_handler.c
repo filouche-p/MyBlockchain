@@ -12,7 +12,6 @@
 
 size_t ARGS_STEP = 0;
 
-// Handler Add
 void handle_add_node(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
@@ -34,25 +33,43 @@ void handle_add_block(t_node **blockchain_adress, char **args) {
     }
 
     char *bid = args[ARGS_STEP];
-    
+
+    if (!args[ARGS_STEP + 1]) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
+    if (args[ARGS_STEP + 1][0] == '*') {
+        t_node *node = *blockchain_adress;
+        while (node) {
+            if (is_bid_valid(node, bid, true)) {
+                add_block(blockchain_adress, node->nid, bid);
+            }
+            node = node->next;
+        }
+        return;
+    }
+
+    if (!can_be_int(args[ARGS_STEP + 1])) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
     if (!is_bid_valid(*blockchain_adress, bid, true)) {
-        printf("false trigger\n");
         print_error(BLOCK_ALREADY_EXISTS);
         return;
     }
-    
-    if (!args[ARGS_STEP + 1] || !is_nid_valid(blockchain_adress, args[ARGS_STEP + 1], false)) {
-        print_error(NODE_ALREADY_EXISTS);
+
+    int nid = str_to_int(args[ARGS_STEP + 1]);
+
+    if (!nid_exists(blockchain_adress, nid)) {
+        print_error(NODE_DOESNT_EXISTS);
         return;
     }
-    
-    int nid = str_to_int(args[ARGS_STEP + 1]);
-    printf("deprecated work even if nid doest exist (no error printed) {not sure}\n");
 
     add_block(blockchain_adress, nid, bid);
 }
 
-// Handler Rm
 void handle_rm_node(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
@@ -60,36 +77,50 @@ void handle_rm_node(t_node **blockchain_adress, char **args) {
     }
 
     char *supposed_nid = args[ARGS_STEP];
-    if (!supposed_nid) {
-        print_error(COMMAND_NOT_FOUND);
+
+    if (supposed_nid[0] == '*') {
+        rm_node(blockchain_adress, 0, true);
         return;
     }
-    
-    //* check nid is useless if nid is invalid it can't be delete
-    // if (!is_nid_valid(blockchain_adress, supposed_nid, true)) {
-    //     print_error(NODE_DOESNT_EXISTS);
-    //     return;
-    // }
 
-    int nid = str_to_int(args[ARGS_STEP]);
-    rm_node(blockchain_adress, nid, (supposed_nid[0] == '*'));
-}
-
-void handle_rm_block(t_node **blockchain_adress, char **args) {
-    if(!args || !args[ARGS_STEP] || !args[ARGS_STEP + 1]) {
-        print_error(COMMAND_NOT_FOUND);
-        return;
-    }
-    
-    char *supposed_nid = args[ARGS_STEP + 1];
-    if(!supposed_nid) {
+    if (!can_be_int(supposed_nid)) {
         print_error(COMMAND_NOT_FOUND);
         return;
     }
 
     int nid = str_to_int(supposed_nid);
+    rm_node(blockchain_adress, nid, false);
+}
+
+void handle_rm_block(t_node **blockchain_adress, char **args) {
+    if(!args || !args[ARGS_STEP]) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
     char *bid = args[ARGS_STEP];
 
+    if (bid[0] == '*' && !args[ARGS_STEP + 1]) {
+        t_node *node = *blockchain_adress;
+        while (node) {
+            rm_block(blockchain_adress, node->nid, "*", true);
+            node = node->next;
+        }
+        return;
+    }
+
+    if (!args[ARGS_STEP + 1]) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
+    char *supposed_nid = args[ARGS_STEP + 1];
+    if (!can_be_int(supposed_nid)) {
+        print_error(COMMAND_NOT_FOUND);
+        return;
+    }
+
+    int nid = str_to_int(supposed_nid);
     rm_block(blockchain_adress, nid, bid, bid[0] == '*');
 }
 
@@ -165,6 +196,79 @@ void handle_sync(t_node **blockchain_adress, char **args) {
     printf("OK\n");
 }
 
+void handle_help(t_node **blockchain_adress, char **args) {
+    (void)blockchain_adress;
+
+    static const char *help_add =
+        "add -- add a node or a block\n"
+        "  add node <nid>        add a node with identifier <nid> (integer)\n"
+        "  add block <bid> <nid> add block <bid> to node <nid>\n"
+        "  add block <bid> *     add block <bid> to all nodes\n";
+
+    static const char *help_rm =
+        "rm -- remove a node or a block\n"
+        "  rm node <nid>         remove node <nid> and all its blocks\n"
+        "  rm node *             remove all nodes\n"
+        "  rm block <bid> <nid>  remove block <bid> from node <nid>\n"
+        "  rm block * <nid>      remove all blocks from node <nid>\n";
+
+    static const char *help_ls =
+        "ls -- list nodes\n"
+        "  ls      print all node identifiers\n"
+        "  ls -l   print nodes with their blocks\n";
+
+    static const char *help_sync =
+        "sync -- synchronize the blockchain\n"
+        "  sync    collect all unique blocks from every node and distribute\n"
+        "          them to all nodes (result: every node holds the same blocks)\n";
+
+    static const char *help_quit =
+        "quit -- exit the program\n"
+        "  quit    save the blockchain and terminate the program\n";
+
+    static const char *help_help =
+        "help -- display help\n"
+        "  help           list all available commands\n"
+        "  help <cmd>     show detailed help for <cmd>\n"
+        "                 commands: add, rm, ls, sync, quit, help\n";
+
+    static const char *help_all =
+        "available commands:\n"
+        "  add    add a node or a block\n"
+        "  rm     remove a node or a block\n"
+        "  ls     list nodes (use -l to also show blocks)\n"
+        "  sync   synchronize all nodes\n"
+        "  quit   save and exit\n"
+        "  help   show this help  |  help <cmd> for details\n";
+
+    if (!args || !args[ARGS_STEP]) {
+        printf("%s", help_all);
+        return;
+    }
+
+    typedef struct { const char *name; const char *text; } t_help_entry;
+    t_help_entry entries[] = {
+        {"add",  help_add},
+        {"rm",   help_rm},
+        {"ls",   help_ls},
+        {"sync", help_sync},
+        {"quit", help_quit},
+        {"help", help_help},
+        {NULL,   NULL}
+    };
+
+    size_t i = 0;
+    while (entries[i].name) {
+        if (my_strcmp(entries[i].name, args[ARGS_STEP]) == 0) {
+            printf("%s", entries[i].text);
+            return;
+        }
+        i++;
+    }
+
+    print_error(COMMAND_NOT_FOUND);
+}
+
 void handle_main(t_node **blockchain_adress, char **args) {
     if(!args || !args[ARGS_STEP]) {
         print_error(COMMAND_NOT_FOUND);
@@ -176,6 +280,7 @@ void handle_main(t_node **blockchain_adress, char **args) {
         {"rm", handle_rm},
         {"ls", handle_ls},
         {"sync", handle_sync},
+        {"help", handle_help},
         {"", NULL}
     };
 
