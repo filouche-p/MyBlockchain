@@ -49,6 +49,7 @@ SAVE_BACKUP=".blockchain.save.bak"
 section "SESSION 1 — functional tests"
 
 OUTPUT=$(expect -c '
+    set timeout 30
     log_user 1
     spawn ./my_blockchain
     sleep $env(DELAY_LONG)
@@ -206,7 +207,7 @@ OUTPUT=$(expect -c '
 
     # QUIT (triggers save_blockchain)
     send "quit\r"
-    sleep $env(DELAY_LONG)
+    expect eof
 ' 2>&1)
 
 echo "$OUTPUT"
@@ -278,6 +279,7 @@ check "block beta present before quit"             "beta"
 section "SESSION 2 — persistence verification (reload)"
 
 OUTPUT2=$(expect -c '
+    set timeout 10
     log_user 1
     spawn ./my_blockchain
     sleep $env(DELAY_LONG)
@@ -286,7 +288,7 @@ OUTPUT2=$(expect -c '
     sleep $env(DELAY_LONG)
 
     send "quit\r"
-    sleep $env(DELAY_LONG)
+    expect eof
 ' 2>&1)
 
 echo "$OUTPUT2"
