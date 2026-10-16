@@ -1,1 +1,1 @@
-export ASAN_OPTIONS=detect_leaks=1:external_symbolizer_path=/opt/homebrew/opt/llvm/bin/llvm-symbolizer && make re && make clean && clear && clear && ./my_blockchain
+export ASAN_OPTIONS=detect_leaks=1:external_symbolizer_path=/opt/homebrew/opt/llvm/bin/llvm-symbolizer && make re && make clean && clear && clear

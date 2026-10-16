@@ -104,24 +104,41 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
         return;
     }
 
-    printf("need to check write return\n");
 
     while(node) {
         char *nid = base_to_str(node->nid, 10);
-        write(fd, nid, my_strlen(nid));
-        write(fd, " : ", 3);
-        // check for write return
+        size_t nid_len = my_strlen(nid);
+
+        if (write(fd, nid, nid_len) != (ssize_t)nid_len) {
+            free(nid);
+            close(fd);
+            return;
+        }
+        if (write(fd, " : ", 3) != 3) {
+            free(nid);
+            close(fd);
+            return;
+        }
 
         if(node->first_block) {
             t_block *block = node->first_block;
 
             size_t i = 0;
             size_t block_size = get_node_block_len(node);
-            
+
             while(i < block_size) {
-                write(fd, block->bid, my_strlen(block->bid));
+                size_t bid_len = my_strlen(block->bid);
+                if (write(fd, block->bid, bid_len) != (ssize_t)bid_len) {
+                    free(nid);
+                    close(fd);
+                    return;
+                }
                 if (i < block_size - 1) {
-                    write(fd, "-", 1);
+                    if (write(fd, "-", 1) != 1) {
+                        free(nid);
+                        close(fd);
+                        return;
+                    }
                 }
 
                 block = block->next;
@@ -129,7 +146,11 @@ void save_blockchain(t_node **blockchain_address, char *file_name) {
             }
         }
 
-        write(fd, "\n", 1);
+        if (write(fd, "\n", 1) != 1) {
+            free(nid);
+            close(fd);
+            return;
+        }
         node = node->next;
         free(nid);
     }

@@ -115,6 +115,16 @@ void handle_rm_block(t_node **blockchain_adress, char **args) {
     }
 
     char *supposed_nid = args[ARGS_STEP + 1];
+
+    if (supposed_nid[0] == '*' && bid[0] != '*') {
+        t_node *node = *blockchain_adress;
+        while (node) {
+            rm_block(blockchain_adress, node->nid, bid, false);
+            node = node->next;
+        }
+        return;
+    }
+
     if (!can_be_int(supposed_nid)) {
         print_error(COMMAND_NOT_FOUND);
         return;
@@ -210,7 +220,8 @@ void handle_help(t_node **blockchain_adress, char **args) {
         "  rm node <nid>         remove node <nid> and all its blocks\n"
         "  rm node *             remove all nodes\n"
         "  rm block <bid> <nid>  remove block <bid> from node <nid>\n"
-        "  rm block * <nid>      remove all blocks from node <nid>\n";
+        "  rm block * <nid>      remove all blocks from node <nid>\n"
+        "  rm block <bid> *      remove block <bid> from every node\n";
 
     static const char *help_ls =
         "ls -- list nodes\n"

@@ -13,11 +13,9 @@
 #include "./libs/headers/command_handler.h"
 #include "./libs/headers/command_sup.h"
 
-//malloc, free, printf, write, open, read, close
-
-
 int main(void) {
     t_node *blockchain = load_blockchain(".blockchain.save");
+    printf("type \"help\" or \"help <cmd>\" to view command");
 
     while(true) {
         char sync_state = is_sync(&blockchain) ? 's' : '-';
