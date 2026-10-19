@@ -15,7 +15,7 @@
 
 int main(void) {
     t_node *blockchain = load_blockchain(".blockchain.save");
-    printf("type \"help\" or \"help <cmd>\" to view command");
+    printf("type \"help\" or \"help <cmd>\" to view command\n");
 
     while(true) {
         char sync_state = is_sync(&blockchain) ? 's' : '-';
