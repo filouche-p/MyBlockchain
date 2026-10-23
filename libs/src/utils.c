@@ -427,7 +427,7 @@ char *base_to_str(int n, int base) {
 
     int total_len = len + (is_negative ? 1 : 0);
     
-    str = malloc(sizeof(char) * (total_len + 1));
+    str = smalloc(sizeof(char) * (total_len + 1));
     if (!str) {
         return NULL;
     }
@@ -575,4 +575,99 @@ bool nid_exists(t_node **blockchain_address, int schearched_nid) {
     }
 
     return false;
+}
+
+void *my_memmove(void *dest, const void *src, size_t n) {
+    unsigned char *d = (unsigned char *)dest;
+    const unsigned char *s = (const unsigned char *)src;
+
+    if (!dest && !src) {
+        return NULL;
+    }
+    if (d < s) {
+        for (size_t i = 0; i < n; i++) {
+            d[i] = s[i];
+        }
+    } else if (d > s) {
+        for (size_t i = n; i > 0; i--) {
+            d[i - 1] = s[i - 1];
+        }
+    }
+    return dest;
+}
+
+void *my_realloc(void *ptr, size_t old_size, size_t new_size) {
+    if (!ptr) {
+        return smalloc(new_size);
+    }
+    if (new_size == 0) {
+        free(ptr);
+        return NULL;
+    }
+    void *new_ptr = smalloc(new_size);
+    if (!new_ptr) {
+        return NULL;
+    }
+    size_t copy_size = old_size < new_size ? old_size : new_size;
+    my_memmove(new_ptr, ptr, copy_size);
+    free(ptr);
+    return new_ptr;
+}
+
+char *my_strncpy(char *dest, const char *src, size_t n) {
+    if (!dest) {
+        return NULL;
+    }
+    size_t i = 0;
+    while (src && src[i] != '\0' && i < n) {
+        dest[i] = src[i];
+        i++;
+    }
+    while (i < n) {
+        dest[i] = '\0';
+        i++;
+    }
+    return dest;
+}
+
+int my_strncmp(const char *s1, const char *s2, size_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    if (!s1 && !s2) {
+        return 0;
+    }
+    if (!s1) {
+        return -1;
+    }
+    if (!s2) {
+        return 1;
+    }
+    size_t i = 0;
+    while (i < n && s1[i] != '\0' && s1[i] == s2[i]) {
+        i++;
+    }
+    if (i == n) {
+        return 0;
+    }
+    return (unsigned char)s1[i] - (unsigned char)s2[i];
+}
+
+char *my_strstr(const char *haystack, const char *needle) {
+    if (!haystack || !needle) {
+        return NULL;
+    }
+    if (needle[0] == '\0') {
+        return (char *)haystack;
+    }
+    for (size_t i = 0; haystack[i] != '\0'; i++) {
+        size_t j = 0;
+        while (needle[j] != '\0' && haystack[i + j] == needle[j]) {
+            j++;
+        }
+        if (needle[j] == '\0') {
+            return (char *)&haystack[i];
+        }
+    }
+    return NULL;
 }

@@ -53,5 +53,11 @@ bool has_same_contents(char **array1, char **array2);
 char **array_diff_uni(char **array1, char **array2);
 char **array_diff(char **array1, char **array2);
 bool nid_exists(t_node **blockchain_address, int searched_nid);
+void *my_memmove(void *dest, const void *src, size_t n);
+void *my_realloc(void *ptr, size_t old_size, size_t new_size);
+void *my_memset(void *ptr, int value, size_t size);
+char *my_strncpy(char *dest, const char *src, size_t n);
+int my_strncmp(const char *s1, const char *s2, size_t n);
+char *my_strstr(const char *haystack, const char *needle);
 
 #endif
