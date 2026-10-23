@@ -12,6 +12,7 @@ MyBlockchain is a personal project built around the manipulation of **linked lis
 - [Requirements](#requirements)
 - [Installation & Build](#installation--build)
 - [Usage](#usage)
+- [CLI Navigation & Shortcuts](#cli-navigation--shortcuts)
 - [Commands](#commands)
 - [Project Structure](#project-structure)
 - [License](#license)
@@ -21,6 +22,9 @@ MyBlockchain is a personal project built around the manipulation of **linked lis
 ## Features
 
 - Interactive CLI with a live status prompt
+- Full arrow key navigation and cursor editing
+- Command history navigation (Up / Down) and reverse search (Ctrl+R)
+- Tab auto-completion for commands
 - Add / remove nodes and blocks with wildcard (`*`) support
 - Sync the entire blockchain so every node holds identical blocks
 - Automatic save & restore via a `.blockchain.save` file
@@ -36,8 +40,8 @@ MyBlockchain is a personal project built around the manipulation of **linked lis
 | Read/write permissions | Required for the save file |
 
 > **Memory usage (worst case):** 10 nodes × 10 blocks each after a full sync ≈ **5.75 MB RAM**, **0.01s CPU**.
-> **Disk usage (total):** .
-> **Disk usage (utils):** .
+> **Disk usage (total):** ≈ **775 KB** (fresh `git clone` with `.git`).
+> **Disk usage (payload):** ≈ **55 KB** (strictly `.c` and `.h` source files).
 
 ---
 
@@ -90,6 +94,25 @@ gcc -o my_blockchain my_blockchain.c libs/src/*.c
 On quit (command), the blockchain is saved to `.blockchain.save` in the working directory and automatically reloaded on the next launch.
 
 > **Warning:** The save file is human-readable but the program does not handle a corrupted or manually edited file. Rename, move, or delete it if you want to start fresh.
+
+### CLI Navigation & Shortcuts
+
+The CLI features interactive line editing with cursor navigation, command history, and shortcuts:
+
+| Shortcut | Action |
+|---|---|
+| <kbd>←</kbd> / <kbd>→</kbd> | Move cursor left / right |
+| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate command history (restores current line when returning to the bottom) |
+| <kbd>Ctrl</kbd> + <kbd>←</kbd> / <kbd>→</kbd> | Jump backward / forward word by word |
+| <kbd>Tab</kbd> | Auto-complete command names |
+| <kbd>Ctrl</kbd> + <kbd>R</kbd> | Reverse incremental history search (`reverse-i-search`) |
+| <kbd>Ctrl</kbd> + <kbd>A</kbd> / <kbd>Ctrl</kbd> + <kbd>E</kbd> | Jump to start / end of line |
+| <kbd>Ctrl</kbd> + <kbd>U</kbd> | Clear the current line |
+| <kbd>Ctrl</kbd> + <kbd>W</kbd> | Delete word backward |
+| <kbd>Ctrl</kbd> + <kbd>K</kbd> | Delete from cursor to the end of the line |
+| <kbd>Ctrl</kbd> + <kbd>L</kbd> | Clear the screen |
+| <kbd>Ctrl</kbd> + <kbd>V</kbd> | Paste text from system clipboard |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> | Copy current line to system clipboard |
 
 ---
 
@@ -155,6 +178,7 @@ MyBlockchain/
 │   │   ├── block_manager.h    # Block add / remove
 │   │   ├── command_handler.h  # Command dispatch
 │   │   ├── command_sup.h      # Command helpers
+│   │   ├── input.h            # Interactive CLI & history header
 │   │   ├── node_manager.h     # Node add / remove
 │   │   └── utils.h            # Shared types & utilities
 │   └── src/                   # Corresponding .c implementations
